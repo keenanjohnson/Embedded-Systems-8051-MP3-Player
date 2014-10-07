@@ -1,0 +1,105 @@
+C51 COMPILER V8.18   PRINT                                                                 10/06/2014 22:10:14 PAGE 1   
+
+
+C51 COMPILER V8.18, COMPILATION OF MODULE PRINT
+OBJECT MODULE PLACED IN print.OBJ
+COMPILER INVOKED BY: C:\Keil8051\C51\BIN\C51.EXE print.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          // print.c
+   2          //
+   3          // Contains memory print functions
+   4          //
+   5          // Keenan Johnson
+   6          // Franco Santa-Maria
+   7          //
+   8          // CpE 4160
+   9          // Sept. 2014
+  10          
+  11          #include "print.h"
+  12          
+  13          void print_line( uint8 *first_byte )
+  14          {
+  15   1          uint8 index;
+  16   1          uint8 value;
+  17   1          
+  18   1          // Print address
+  19   1          printf( "%p ", first_byte );
+  20   1          
+  21   1          // Print hexadecimal values
+  22   1          for( index=0; index<16; index++ )
+  23   1          {
+  24   2              // Add offset to start addr
+  25   2              value = *( first_byte + index );
+  26   2              
+  27   2              // Print value
+  28   2              printf( "%2.2bX ", value );
+  29   2          }
+  30   1          
+  31   1          // Print ASCII
+  32   1          for( index=0; index<16; index++ )
+  33   1          {
+  34   2              // Add offset to start addr
+  35   2              value = *(first_byte + index);
+  36   2              
+  37   2              // Check that char is printable
+  38   2              if ( (value < 0x20) || (value > 0x7E) )
+  39   2              {
+  40   3                  // Value is out of range
+  41   3                  // Replace with a "."
+  42   3                  value = 0x2E;
+  43   3              }
+  44   2              
+  45   2              // Print character
+  46   2              putchar( value );
+  47   2          }
+  48   1      }
+  49          
+  50          void print_mem_block( uint8 *start_addr, uint16 num_bytes )
+  51          {
+  52   1          uint16 index;
+  53   1          
+  54   1          // Print heading
+  55   1          printf("Addr.  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F");
+C51 COMPILER V8.18   PRINT                                                                 10/06/2014 22:10:14 PAGE 2   
+
+  56   1          
+  57   1          // Add carriage return and linefeed
+  58   1          putchar( CR );
+  59   1          putchar( LF );
+  60   1      
+  61   1          // Adjust start addr to nearest 16 byte boundary
+  62   1          index = (uint16) start_addr;
+  63   1          index = index & 0x000F;
+  64   1          start_addr = start_addr - index;
+  65   1          index = 0;
+  66   1          
+  67   1          // Print lines
+  68   1          while( index < num_bytes )
+  69   1          {
+  70   2              // Print
+  71   2              print_line( start_addr + index );
+  72   2              
+  73   2              // Increment index
+  74   2              index += 16;
+  75   2              
+  76   2              // Add carriage return and linefeed
+  77   2              putchar( CR );
+  78   2              putchar( LF );
+  79   2          }
+  80   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    226    ----
+   CONSTANT SIZE    =     66    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      12
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

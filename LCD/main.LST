@@ -1,0 +1,42 @@
+C51 COMPILER V8.18   MAIN                                                                  10/07/2014 16:42:09 PAGE 1   
+
+
+C51 COMPILER V8.18, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil8051\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          // main.c
+   2          //
+   3          // main file for experiment #1
+   4          //
+   5          // Keenan Johnson
+   6          // Franco Santa-Maria
+   7          //
+   8          // CpE 4160
+   9          // Sept. 2014
+  10          
+  11          #include "Main.h"
+  12          #include "PORT.h"
+  13          
+  14          void main(void)
+  15          {
+  16   1              while(1)
+  17   1              {
+  18   2              }
+  19   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =      2    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

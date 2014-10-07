@@ -1,0 +1,59 @@
+C51 COMPILER V8.18   MAIN                                                                  10/06/2014 22:10:14 PAGE 1   
+
+
+C51 COMPILER V8.18, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil8051\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          // main.c
+   2          //
+   3          // main file for experiment #1
+   4          //
+   5          // Keenan Johnson
+   6          // Franco Santa-Maria
+   7          //
+   8          // CpE 4160
+   9          // Sept. 2014
+  10          
+  11          #include "Main.h"
+  12          #include "memory_test.h"
+  13          #include "PORT.h"
+  14          #include "print.h"
+  15          #include "uart.h"
+  16          
+  17          void main(void)
+  18          {
+  19   1          // Declare generic pointer
+  20   1          uint8 *pointer;
+  21   1              
+  22   1          // Prepare UART
+  23   1          uart_init();
+  24   1          
+  25   1              // Infinite Display Loops
+  26   1              while(1)
+  27   1              {
+  28   2                  // Print Code Memory
+  29   2                  pointer = code_memory_init();
+  30   2                  print_mem_block( pointer, 64 );
+  31   2                  
+  32   2                  // Print XDATA Memory
+  33   2                  pointer = xdata_memory_init();
+  34   2                  print_mem_block( pointer, 64 );
+  35   2              }
+  36   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     37    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
