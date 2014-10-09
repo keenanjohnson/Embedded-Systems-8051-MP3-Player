@@ -1,2 +1,9 @@
 *.LST
 *.OBJ
+*.Opt
+*.Uv2
+*.hex
+*.lnp
+*.M51
+*.plg
+*.BAK
