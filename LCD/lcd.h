@@ -27,4 +27,7 @@ void lcd_init();
 // Prints a nul terminated character array to LCD screen
 void lcd_print_array( uint8 *array );
 
+// Clears the LCD screen
+void lcd_clear();
+
 #endif

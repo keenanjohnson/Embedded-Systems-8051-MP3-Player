@@ -10,39 +10,37 @@
 
 void lcd_write_cmd( uint8 cmd )
 {
-    RS = 0;
-    E = 1;
     P0 = cmd;
+	RS = 0;
+	E = 1;
+	delay(5);
     E = 0;
     P0 = 0xFF;
 }
 
 void lcd_write_data( uint8 dat )
 {
-    RS = 1;
-    E = 1;
     P0 = dat;
+	RS = 1;
+	E = 1; 
+	delay(5);
     E = 0;
     P0 = 0xFF;
 }
 
 void lcd_init()
 {
-    // Set mode
-    lcd_write_cmd( 0x38 );
-    delay( 5 );
-    
-    // Turns on cursor
-    lcd_write_cmd( 0x38 );
-    delay( 5 );
-    
-    // Clears display
-    lcd_write_cmd( 0x01 );
-    delay( 5 );
-    
-    // Set entry mode
-    lcd_write_cmd( 0x04 );
-    delay( 5 );
+	lcd_write_cmd( 0x38 );
+	delay( 50 );
+
+	lcd_write_cmd( 0x0C );
+	delay( 50 );
+
+	lcd_write_cmd( 0x06 );
+	delay( 50 );
+
+	lcd_write_cmd( 0x01 );
+	delay( 50 );
 }
 
 void lcd_print_array( uint8 *array )
@@ -56,9 +54,16 @@ void lcd_print_array( uint8 *array )
     while ( *iterator != NUL )
     {
         // Write data at that location
-        lcd_write_data( *array );
+        lcd_write_data( *iterator );
         
         // Increment the iterator
         iterator++;
     }
 }
+
+void lcd_clear()
+{
+	lcd_write_cmd( 0x01 );
+	delay( 10 );
+}
+
