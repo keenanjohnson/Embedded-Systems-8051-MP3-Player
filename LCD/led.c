@@ -1,10 +1,11 @@
 #include "led.h"
 
-static uint8 code state[] = {0x04, 0x03, 0x02, 0x01};
+static uint8 code states[] = {0x80, 0x40, 0x20, 0x10};
 static uint8 num_states = 4;
 
 void led()
 {
+	uint8 i = 0;
 	uint32 led_delay=1000;
 	uint8 left_right=1;
 

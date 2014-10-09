@@ -13,16 +13,8 @@
 
 void main(void)
 {
-
-	lcd_init();
-
 	while(1)
 	{
-		REDLED = 0;
-		delay( 500 );
-		REDLED = 1;
-		delay( 500 );
-	    
-		lcd_write_data( 0x41 );
+	    led();
 	}
 }

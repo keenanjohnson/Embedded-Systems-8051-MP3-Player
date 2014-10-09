@@ -1,8 +1,8 @@
-BL51 BANKED LINKER/LOCATER V6.20                                                        10/08/2014  23:32:26  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.20                                                        10/09/2014  13:15:12  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.20, INVOKED BY:
-C:\KEIL8051\C51\BIN\BL51.EXE delay.obj, lcd.obj, main.obj TO lcd_exp RAMSIZE (256)
+C:\KEIL8051\C51\BIN\BL51.EXE delay.obj, lcd.obj, main.obj, led.obj TO lcd_exp RAMSIZE (256)
 
 
 MEMORY MODEL: SMALL
@@ -12,9 +12,11 @@ INPUT MODULES INCLUDED:
   delay.obj (DELAY)
   lcd.obj (LCD)
   main.obj (MAIN)
+  led.obj (LED)
   C:\KEIL8051\C51\LIB\C51S.LIB (?C_STARTUP)
   C:\KEIL8051\C51\LIB\C51S.LIB (?C?CLDPTR)
   C:\KEIL8051\C51\LIB\C51S.LIB (?C?ULCMP)
+  C:\KEIL8051\C51\LIB\C51S.LIB (?C_INIT)
 
 
 LINK MAP OF MODULE:  lcd_exp (DELAY)
@@ -25,21 +27,25 @@ LINK MAP OF MODULE:  lcd_exp (DELAY)
 
             * * * * * * *   D A T A   M E M O R Y   * * * * * * *
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
-            DATA    0008H     0008H     UNIT         _DATA_GROUP_
-            DATA    0010H     0006H     UNIT         ?DT?_LCD_PRINT_ARRAY?LCD
-            IDATA   0016H     0001H     UNIT         ?STACK
+            DATA    0008H     000EH     UNIT         _DATA_GROUP_
+            DATA    0016H     0006H     UNIT         ?DT?_LCD_PRINT_ARRAY?LCD
+            DATA    001CH     0001H     UNIT         ?DT?LED
+            IDATA   001DH     0001H     UNIT         ?STACK
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
             CODE    0000H     0003H     ABSOLUTE     
                     0003H     07FDH                  *** GAP ***
-            CODE    0800H     0056H     UNIT         ?PR?_DELAY?DELAY
-            CODE    0856H     003FH     UNIT         ?PR?LCD_INIT?LCD
-            CODE    0895H     0032H     UNIT         ?PR?_LCD_PRINT_ARRAY?LCD
-            CODE    08C7H     002AH     UNIT         ?C?LIB_CODE
-            CODE    08F1H     0024H     UNIT         ?PR?MAIN?MAIN
-            CODE    0915H     000CH     UNIT         ?PR?_LCD_WRITE_CMD?LCD
-            CODE    0921H     000CH     UNIT         ?PR?_LCD_WRITE_DATA?LCD
-            CODE    092DH     000CH     UNIT         ?C_C51STARTUP
+            CODE    0800H     008CH     UNIT         ?C_C51STARTUP
+            CODE    088CH     005EH     UNIT         ?PR?LED?LED
+            CODE    08EAH     0056H     UNIT         ?PR?_DELAY?DELAY
+            CODE    0940H     003FH     UNIT         ?PR?LCD_INIT?LCD
+            CODE    097FH     0032H     UNIT         ?PR?_LCD_PRINT_ARRAY?LCD
+            CODE    09B1H     002AH     UNIT         ?C?LIB_CODE
+            CODE    09DBH     000CH     UNIT         ?PR?_LCD_WRITE_CMD?LCD
+            CODE    09E7H     000CH     UNIT         ?PR?_LCD_WRITE_DATA?LCD
+            CODE    09F3H     0005H     UNIT         ?PR?MAIN?MAIN
+            CODE    09F8H     0004H     UNIT         ?C_INITSEG
+            CODE    09FCH     0004H     UNIT         ?CO?LED
 
 
 
@@ -51,20 +57,19 @@ SEGMENT                            DATA_GROUP
 ------------------------------------------------
 ?C_C51STARTUP                    -----    -----
   +--> ?PR?MAIN?MAIN
+  +--> ?C_INITSEG
+
+BL51 BANKED LINKER/LOCATER V6.20                                                      10/09/2014  13:15:12  PAGE 2
+
 
 ?PR?MAIN?MAIN                    -----    -----
-  +--> ?PR?LCD_INIT?LCD
-  +--> ?PR?_DELAY?DELAY
-  +--> ?PR?_LCD_WRITE_DATA?LCD
+  +--> ?PR?LED?LED
 
-?PR?LCD_INIT?LCD                 -----    -----
-  +--> ?PR?_LCD_WRITE_CMD?LCD
-BL51 BANKED LINKER/LOCATER V6.20                                                      10/08/2014  23:32:26  PAGE 2
-
-
+?PR?LED?LED                      0008H    0006H
+  +--> ?CO?LED
   +--> ?PR?_DELAY?DELAY
 
-?PR?_DELAY?DELAY                 0008H    0008H
+?PR?_DELAY?DELAY                 000EH    0008H
 
 
 
@@ -75,7 +80,7 @@ SYMBOL TABLE OF MODULE:  lcd_exp (DELAY)
 
   -------         MODULE        DELAY
   C:0000H         SYMBOL        _ICE_DUMMY_
-  C:0800H         PUBLIC        _delay
+  C:08EAH         PUBLIC        _delay
   D:0089H         PUBLIC        TMOD
   B:00A8H.1       PUBLIC        ET0
   B:0088H.5       PUBLIC        TF0
@@ -83,25 +88,25 @@ SYMBOL TABLE OF MODULE:  lcd_exp (DELAY)
   D:008AH         PUBLIC        TL0
   B:0088H.4       PUBLIC        TR0
   -------         PROC          _DELAY
-  D:0008H         SYMBOL        ms_to_delay
+  D:000EH         SYMBOL        ms_to_delay
   -------         DO            
-  D:000CH         SYMBOL        millisec
+  D:0012H         SYMBOL        millisec
   -------         ENDDO         
-  C:0800H         LINE#         11
-  C:0808H         LINE#         12
-  C:0808H         LINE#         15
-  C:080BH         LINE#         16
-  C:080EH         LINE#         18
-  C:0810H         LINE#         21
-  C:082FH         LINE#         22
-  C:082FH         LINE#         23
-  C:0832H         LINE#         24
-  C:0835H         LINE#         26
-  C:0837H         LINE#         28
-  C:0839H         LINE#         30
-  C:083CH         LINE#         32
-  C:083EH         LINE#         33
-  C:0855H         LINE#         34
+  C:08EAH         LINE#         11
+  C:08F2H         LINE#         12
+  C:08F2H         LINE#         15
+  C:08F5H         LINE#         16
+  C:08F8H         LINE#         18
+  C:08FAH         LINE#         21
+  C:0919H         LINE#         22
+  C:0919H         LINE#         23
+  C:091CH         LINE#         24
+  C:091FH         LINE#         26
+  C:0921H         LINE#         28
+  C:0923H         LINE#         30
+  C:0926H         LINE#         32
+  C:0928H         LINE#         33
+  C:093FH         LINE#         34
   -------         ENDPROC       _DELAY
   -------         ENDMOD        DELAY
 
@@ -112,105 +117,145 @@ SYMBOL TABLE OF MODULE:  lcd_exp (DELAY)
   D:00A0H         PUBLIC        P2
   D:00B0H         PUBLIC        P3
   B:00B0H.6       PUBLIC        RS
-  C:0921H         PUBLIC        _lcd_write_data
+  C:09E7H         PUBLIC        _lcd_write_data
   B:00B0H.7       PUBLIC        E
-  C:0895H         PUBLIC        _lcd_print_array
-  C:0856H         PUBLIC        lcd_init
-  C:0915H         PUBLIC        _lcd_write_cmd
+BL51 BANKED LINKER/LOCATER V6.20                                                      10/09/2014  13:15:12  PAGE 3
+
+
+  C:097FH         PUBLIC        _lcd_print_array
+  C:0940H         PUBLIC        lcd_init
+  C:09DBH         PUBLIC        _lcd_write_cmd
   -------         PROC          _LCD_WRITE_CMD
   D:0007H         SYMBOL        cmd
-BL51 BANKED LINKER/LOCATER V6.20                                                      10/08/2014  23:32:26  PAGE 3
-
-
-  C:0915H         LINE#         11
-  C:0915H         LINE#         12
-  C:0915H         LINE#         13
-  C:0917H         LINE#         14
-  C:0919H         LINE#         15
-  C:091BH         LINE#         16
-  C:091DH         LINE#         17
-  C:0920H         LINE#         18
+  C:09DBH         LINE#         11
+  C:09DBH         LINE#         12
+  C:09DBH         LINE#         13
+  C:09DDH         LINE#         14
+  C:09DFH         LINE#         15
+  C:09E1H         LINE#         16
+  C:09E3H         LINE#         17
+  C:09E6H         LINE#         18
   -------         ENDPROC       _LCD_WRITE_CMD
   -------         PROC          _LCD_WRITE_DATA
   D:0007H         SYMBOL        dat
-  C:0921H         LINE#         20
-  C:0921H         LINE#         21
-  C:0921H         LINE#         22
-  C:0923H         LINE#         23
-  C:0925H         LINE#         24
-  C:0927H         LINE#         25
-  C:0929H         LINE#         26
-  C:092CH         LINE#         27
+  C:09E7H         LINE#         20
+  C:09E7H         LINE#         21
+  C:09E7H         LINE#         22
+  C:09E9H         LINE#         23
+  C:09EBH         LINE#         24
+  C:09EDH         LINE#         25
+  C:09EFH         LINE#         26
+  C:09F2H         LINE#         27
   -------         ENDPROC       _LCD_WRITE_DATA
   -------         PROC          LCD_INIT
-  C:0856H         LINE#         29
-  C:0856H         LINE#         30
-  C:0856H         LINE#         32
-  C:085BH         LINE#         33
-  C:0866H         LINE#         36
-  C:086BH         LINE#         37
-  C:0876H         LINE#         40
-  C:087BH         LINE#         41
-  C:0886H         LINE#         44
-  C:088BH         LINE#         45
+  C:0940H         LINE#         29
+  C:0940H         LINE#         30
+  C:0940H         LINE#         32
+  C:0945H         LINE#         33
+  C:0950H         LINE#         36
+  C:0955H         LINE#         37
+  C:0960H         LINE#         40
+  C:0965H         LINE#         41
+  C:0970H         LINE#         44
+  C:0975H         LINE#         45
   -------         ENDPROC       LCD_INIT
   -------         PROC          _LCD_PRINT_ARRAY
-  D:0010H         SYMBOL        array
+  D:0016H         SYMBOL        array
   -------         DO            
-  D:0013H         SYMBOL        iterator
+  D:0019H         SYMBOL        iterator
   -------         ENDDO         
-  C:0895H         LINE#         48
-  C:089BH         LINE#         49
-  C:089BH         LINE#         53
-  C:08A1H         LINE#         56
-  C:08ACH         LINE#         57
-  C:08ACH         LINE#         59
-  C:08B9H         LINE#         62
-  C:08C4H         LINE#         63
-  C:08C6H         LINE#         64
+  C:097FH         LINE#         48
+  C:0985H         LINE#         49
+  C:0985H         LINE#         53
+  C:098BH         LINE#         56
+  C:0996H         LINE#         57
+  C:0996H         LINE#         59
+  C:09A3H         LINE#         62
+  C:09AEH         LINE#         63
+  C:09B0H         LINE#         64
   -------         ENDPROC       _LCD_PRINT_ARRAY
   -------         ENDMOD        LCD
 
   -------         MODULE        MAIN
   C:0000H         SYMBOL        _ICE_DUMMY_
   D:0080H         PUBLIC        P0
+BL51 BANKED LINKER/LOCATER V6.20                                                      10/09/2014  13:15:12  PAGE 4
+
+
   D:0090H         PUBLIC        P1
   D:00A0H         PUBLIC        P2
   D:00B0H         PUBLIC        P3
-  C:08F1H         PUBLIC        main
-  B:00A0H.4       PUBLIC        REDLED
-BL51 BANKED LINKER/LOCATER V6.20                                                      10/08/2014  23:32:26  PAGE 4
-
-
+  C:09F3H         PUBLIC        main
   -------         PROC          MAIN
-  C:08F1H         LINE#         14
-  C:08F1H         LINE#         15
-  C:08F1H         LINE#         17
-  C:08F4H         LINE#         19
-  C:08F4H         LINE#         20
-  C:08F4H         LINE#         21
-  C:08F6H         LINE#         22
-  C:0901H         LINE#         23
-  C:0903H         LINE#         24
-  C:090EH         LINE#         26
-  C:0913H         LINE#         27
+  C:09F3H         LINE#         14
+  C:09F3H         LINE#         15
+  C:09F3H         LINE#         16
+  C:09F3H         LINE#         17
+  C:09F3H         LINE#         18
+  C:09F6H         LINE#         19
   -------         ENDPROC       MAIN
   -------         ENDMOD        MAIN
 
+  -------         MODULE        LED
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  C:09FCH         SYMBOL        states
+  C:088CH         PUBLIC        led
+  D:001CH         SYMBOL        num_states
+  -------         PROC          LED
+  -------         DO            
+  D:0008H         SYMBOL        i
+  D:0009H         SYMBOL        led_delay
+  D:000DH         SYMBOL        left_right
+  -------         ENDDO         
+  C:088CH         LINE#         6
+  C:088CH         LINE#         7
+  C:088CH         LINE#         8
+  C:088FH         LINE#         9
+  C:0899H         LINE#         10
+  C:089CH         LINE#         12
+  C:08A1H         LINE#         13
+  C:08A1H         LINE#         14
+  C:08A6H         LINE#         15
+  C:08A9H         LINE#         17
+  C:08B2H         LINE#         18
+  C:08B4H         LINE#         19
+  C:08BFH         LINE#         20
+  C:08C1H         LINE#         22
+  C:08C5H         LINE#         23
+  C:08C5H         LINE#         24
+  C:08CCH         LINE#         25
+  C:08D1H         LINE#         26
+  C:08DAH         LINE#         27
+  C:08DCH         LINE#         28
+  C:08E7H         LINE#         29
+  C:08E9H         LINE#         30
+  -------         ENDPROC       LED
+  -------         ENDMOD        LED
+
   -------         MODULE        ?C?CLDPTR
-  C:08C7H         PUBLIC        ?C?CLDPTR
+  C:09B1H         PUBLIC        ?C?CLDPTR
   -------         ENDMOD        ?C?CLDPTR
+BL51 BANKED LINKER/LOCATER V6.20                                                      10/09/2014  13:15:12  PAGE 5
+
+
 
   -------         MODULE        ?C?ULCMP
-  C:08E0H         PUBLIC        ?C?ULCMP
+  C:09CAH         PUBLIC        ?C?ULCMP
   -------         ENDMOD        ?C?ULCMP
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?LCD_INIT?LCD
 
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_LCD_PRINT_ARRAY?LCD
 
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0103H BYTE (12%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0149H BYTE (16%) *
 ******************************************************************************
 
-Program Size: data=23.0 xdata=0 code=316
-LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)
+Program Size: data=30.0 xdata=0 code=515
+LINK/LOCATE RUN COMPLETE.  2 WARNING(S),  0 ERROR(S)
