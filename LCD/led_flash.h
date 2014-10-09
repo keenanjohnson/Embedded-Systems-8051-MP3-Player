@@ -13,6 +13,8 @@
 #include "PORT.H"
 #include "delay.h"
 #include "led.h"
+#include "init_switch.h"
+#include "get_switch.h"
 
 void led_flash();
 
