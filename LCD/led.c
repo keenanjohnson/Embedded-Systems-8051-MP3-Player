@@ -1,6 +1,14 @@
+// led.h
+//
+// Keenan Johnson
+// Franco Santa-Maria
+//
+// CpE 4160
+// FALL 2014
+
 #include "led.h"
 
-static uint8 code states[] = {0x80, 0x40, 0x20, 0x10};
+static uint8 code states[] = {0x8F, 0x4F, 0x2F, 0x1F};
 static uint8 num_states = 4;
 
 void led()
