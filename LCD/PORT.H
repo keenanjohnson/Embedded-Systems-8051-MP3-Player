@@ -1,39 +1,17 @@
-/*------------------------------------------------------------------*-
 
-   Port.H (v1.00)
-
-  ------------------------------------------------------------------
-
-   Port Header (see Chap 5) for the project DINOSAUR (Chap 8)
-
-   COPYRIGHT
-   ---------
-
-   This code is associated with the book:
-
-   EMBEDDED C by Michael J. Pont 
-   [Pearson Education, 2002: ISBN: 0-201-79523-X].
-
-   This code is copyright (c) 2001 by Michael J. Pont.
- 
-   See book for copyright details and other information.
-
--*------------------------------------------------------------------*/
 
 #ifndef _PORT_H
 #define _PORT_H
 
-// ------ Dinosaur.C ----------------------------------------------
-// Ports 1 and 2 used for demo...
 // Port 0
-/*sbit P0_0 = P0^0;
-sbit P0_1 = P0^1;
-sbit P0_2 = P0^2;
-sbit P0_3 = P0^3;
-sbit P0_4 = P0^4;
-sbit P0_5 = P0^5;
-sbit P0_6 = P0^6;
-sbit P0_7 = P0^7;  */
+sbit DB0 = P0^0;
+sbit DB1 = P0^1;
+sbit DB2 = P0^2;
+sbit DB3 = P0^3;
+sbit DB4 = P0^4;
+sbit DB5 = P0^5;
+sbit DB6 = P0^6;
+sbit DB7 = P0^7;
 
 // Port 1
 /*sbit P1_0 = P1^0;
@@ -65,12 +43,4 @@ sbit P3_5 = P3^5;
 sbit P3_6 = P3^6;
 sbit P3_7 = P3^7; */
 
-
 #endif
-
-/*------------------------------------------------------------------*-
-  ---- END OF FILE -------------------------------------------------
--*------------------------------------------------------------------*/
-
-
-

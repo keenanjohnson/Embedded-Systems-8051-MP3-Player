@@ -11,7 +11,7 @@
 void lcd_write_cmd( uint8 cmd );
 
 // Writes data to the LCD screen
-void lcd_write_data( uint8 data );
+void lcd_write_data( uint8 dat );
 
 // Initliazes the LCD screen
 void lcd_init();

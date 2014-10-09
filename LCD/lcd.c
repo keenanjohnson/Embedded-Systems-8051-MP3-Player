@@ -9,7 +9,7 @@ void lcd_write_cmd( uint8 cmd )
     P0 = 0xFF;
 }
 
-void lcd_write_data( uint8 data )
+void lcd_write_data( uint8 dat )
 {
     RS = 1;
     E = 1;
