@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.20                                                        10/08/2014  22:14:12  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.20                                                        10/08/2014  23:32:26  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.20, INVOKED BY:
@@ -25,7 +25,7 @@ LINK MAP OF MODULE:  lcd_exp (DELAY)
 
             * * * * * * *   D A T A   M E M O R Y   * * * * * * *
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
-            DATA    0008H     0008H     UNIT         ?DT?_DELAY?DELAY
+            DATA    0008H     0008H     UNIT         _DATA_GROUP_
             DATA    0010H     0006H     UNIT         ?DT?_LCD_PRINT_ARRAY?LCD
             IDATA   0016H     0001H     UNIT         ?STACK
 
@@ -36,21 +36,35 @@ LINK MAP OF MODULE:  lcd_exp (DELAY)
             CODE    0856H     003FH     UNIT         ?PR?LCD_INIT?LCD
             CODE    0895H     0032H     UNIT         ?PR?_LCD_PRINT_ARRAY?LCD
             CODE    08C7H     002AH     UNIT         ?C?LIB_CODE
-            CODE    08F1H     000CH     UNIT         ?PR?_LCD_WRITE_CMD?LCD
-            CODE    08FDH     000CH     UNIT         ?PR?_LCD_WRITE_DATA?LCD
-            CODE    0909H     000CH     UNIT         ?C_C51STARTUP
-            CODE    0915H     0006H     UNIT         ?PR?MAIN?MAIN
+            CODE    08F1H     0024H     UNIT         ?PR?MAIN?MAIN
+            CODE    0915H     000CH     UNIT         ?PR?_LCD_WRITE_CMD?LCD
+            CODE    0921H     000CH     UNIT         ?PR?_LCD_WRITE_DATA?LCD
+            CODE    092DH     000CH     UNIT         ?C_C51STARTUP
 
 
 
 OVERLAY MAP OF MODULE:   lcd_exp (DELAY)
 
 
-SEGMENT
-  +--> CALLED SEGMENT
----------------------
-?C_C51STARTUP
+SEGMENT                            DATA_GROUP 
+  +--> CALLED SEGMENT            START    LENGTH
+------------------------------------------------
+?C_C51STARTUP                    -----    -----
   +--> ?PR?MAIN?MAIN
+
+?PR?MAIN?MAIN                    -----    -----
+  +--> ?PR?LCD_INIT?LCD
+  +--> ?PR?_DELAY?DELAY
+  +--> ?PR?_LCD_WRITE_DATA?LCD
+
+?PR?LCD_INIT?LCD                 -----    -----
+  +--> ?PR?_LCD_WRITE_CMD?LCD
+BL51 BANKED LINKER/LOCATER V6.20                                                      10/08/2014  23:32:26  PAGE 2
+
+
+  +--> ?PR?_DELAY?DELAY
+
+?PR?_DELAY?DELAY                 0008H    0008H
 
 
 
@@ -58,9 +72,6 @@ SYMBOL TABLE OF MODULE:  lcd_exp (DELAY)
 
   VALUE           TYPE          NAME
   ----------------------------------
-
-BL51 BANKED LINKER/LOCATER V6.20                                                      10/08/2014  22:14:12  PAGE 2
-
 
   -------         MODULE        DELAY
   C:0000H         SYMBOL        _ICE_DUMMY_
@@ -101,35 +112,35 @@ SYMBOL TABLE OF MODULE:  lcd_exp (DELAY)
   D:00A0H         PUBLIC        P2
   D:00B0H         PUBLIC        P3
   B:00B0H.6       PUBLIC        RS
-  C:08FDH         PUBLIC        _lcd_write_data
+  C:0921H         PUBLIC        _lcd_write_data
   B:00B0H.7       PUBLIC        E
   C:0895H         PUBLIC        _lcd_print_array
   C:0856H         PUBLIC        lcd_init
-  C:08F1H         PUBLIC        _lcd_write_cmd
+  C:0915H         PUBLIC        _lcd_write_cmd
   -------         PROC          _LCD_WRITE_CMD
   D:0007H         SYMBOL        cmd
-  C:08F1H         LINE#         11
-  C:08F1H         LINE#         12
-  C:08F1H         LINE#         13
-  C:08F3H         LINE#         14
-  C:08F5H         LINE#         15
-  C:08F7H         LINE#         16
-  C:08F9H         LINE#         17
-  C:08FCH         LINE#         18
+BL51 BANKED LINKER/LOCATER V6.20                                                      10/08/2014  23:32:26  PAGE 3
+
+
+  C:0915H         LINE#         11
+  C:0915H         LINE#         12
+  C:0915H         LINE#         13
+  C:0917H         LINE#         14
+  C:0919H         LINE#         15
+  C:091BH         LINE#         16
+  C:091DH         LINE#         17
+  C:0920H         LINE#         18
   -------         ENDPROC       _LCD_WRITE_CMD
   -------         PROC          _LCD_WRITE_DATA
   D:0007H         SYMBOL        dat
-BL51 BANKED LINKER/LOCATER V6.20                                                      10/08/2014  22:14:12  PAGE 3
-
-
-  C:08FDH         LINE#         20
-  C:08FDH         LINE#         21
-  C:08FDH         LINE#         22
-  C:08FFH         LINE#         23
-  C:0901H         LINE#         24
-  C:0903H         LINE#         25
-  C:0905H         LINE#         26
-  C:0908H         LINE#         27
+  C:0921H         LINE#         20
+  C:0921H         LINE#         21
+  C:0921H         LINE#         22
+  C:0923H         LINE#         23
+  C:0925H         LINE#         24
+  C:0927H         LINE#         25
+  C:0929H         LINE#         26
+  C:092CH         LINE#         27
   -------         ENDPROC       _LCD_WRITE_DATA
   -------         PROC          LCD_INIT
   C:0856H         LINE#         29
@@ -166,22 +177,25 @@ SYMBOL TABLE OF MODULE:  lcd_exp (DELAY)
   D:0090H         PUBLIC        P1
   D:00A0H         PUBLIC        P2
   D:00B0H         PUBLIC        P3
-  C:0915H         PUBLIC        main
-  B:00A0H.6       PUBLIC        AMBERLED
-  B:00A0H.7       PUBLIC        GREENLED
+  C:08F1H         PUBLIC        main
+  B:00A0H.4       PUBLIC        REDLED
+BL51 BANKED LINKER/LOCATER V6.20                                                      10/08/2014  23:32:26  PAGE 4
+
+
   -------         PROC          MAIN
-  C:0915H         LINE#         13
-  C:0915H         LINE#         14
-  C:0915H         LINE#         15
-  C:0915H         LINE#         16
-  C:0915H         LINE#         17
-  C:0917H         LINE#         18
-  C:0919H         LINE#         19
+  C:08F1H         LINE#         14
+  C:08F1H         LINE#         15
+  C:08F1H         LINE#         17
+  C:08F4H         LINE#         19
+  C:08F4H         LINE#         20
+  C:08F4H         LINE#         21
+  C:08F6H         LINE#         22
+  C:0901H         LINE#         23
+  C:0903H         LINE#         24
+  C:090EH         LINE#         26
+  C:0913H         LINE#         27
   -------         ENDPROC       MAIN
   -------         ENDMOD        MAIN
-BL51 BANKED LINKER/LOCATER V6.20                                                      10/08/2014  22:14:12  PAGE 4
-
-
 
   -------         MODULE        ?C?CLDPTR
   C:08C7H         PUBLIC        ?C?CLDPTR
@@ -192,14 +206,11 @@ SYMBOL TABLE OF MODULE:  lcd_exp (DELAY)
   -------         ENDMOD        ?C?ULCMP
 
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-    SEGMENT: ?PR?LCD_INIT?LCD
-
-*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_LCD_PRINT_ARRAY?LCD
 
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00E5H BYTE (11%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0103H BYTE (12%) *
 ******************************************************************************
 
-Program Size: data=23.0 xdata=0 code=286
-LINK/LOCATE RUN COMPLETE.  2 WARNING(S),  0 ERROR(S)
+Program Size: data=23.0 xdata=0 code=316
+LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)
