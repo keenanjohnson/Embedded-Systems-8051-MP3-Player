@@ -9,12 +9,17 @@
 #include "delay.h"
 #include "lcd.h"
 #include "led.h"
+#include "led_flash.h"
 #include "PORT.h"
 
 void main(void)
 {
+	// Configures LCD
+	lcd_init();
+
 	while(1)
 	{
-	    led();
+		// Handles all input and output
+	    led_flash();
 	}
 }

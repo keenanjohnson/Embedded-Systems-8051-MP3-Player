@@ -1,4 +1,4 @@
-// led_flash.h
+// led_flash.c
 //
 // Keenan Johnson
 // Franco Santa-Maria
@@ -10,34 +10,61 @@
 
 void led_flash()
 {
-	uint8 i = 0;
-	uint32 led_delay=1000;
-	uint8 left_right=1;
-	init_switch(SW1);
-	init_switch(SW2);
-	init_switch(SW3);
-	init_switch(SW4);
+	int i = 0;
+	uint16 led_delay=1000;
+	uint8 right_left=0;
+	
+	// Prep Buttons
+	init_buttons();
+
+	// Print status
+	lcd_print_led_status( right_left, led_delay );
+
 	while (1)
 	{
-		if (get_switch(SW1))
+		// Button 1
+		if ( get_buttons_1( debounce_delay ) )
 		{
-			left_right=1;
+			// Sets LEDs to move left to right
+			right_left=1;
+
+			// Print status
+			lcd_print_led_status( right_left, led_delay );
 		}
-		else if (get_switch (SW2))
+		// Button 2
+		else if ( get_buttons_2( debounce_delay ) )
 		{
+			// Increases time increment
 			if (led_delay < 2000)
 				led_delay+=100;
+
+			// Print status
+			lcd_print_led_status( right_left, led_delay );
 		}
-		else if (get_switch (SW3))
+		// Button 3
+		else if ( get_buttons_3( debounce_delay ) )
 		{
+			// Decreases time increment
 			if (led_delay > 100)
 				led_delay-=100;
+
+			// Print status
+			lcd_print_led_status( right_left, led_delay );
 		}
-		else if (get_switch (SW4))
+		// Button 4
+		else if (get_buttons_4( debounce_delay ) )
 		{
-			left_right=0;
+			// Sets LEDs to move right to left
+			right_left=0;
+
+			// Print status
+			lcd_print_led_status( right_left, led_delay );
 		}
-		i=led(left_right, i);
+
+		// Lights LEDs
+		i=led(right_left, i);
+
+		// Delay for time increment
 		delay(led_delay);
 	}
 }

@@ -39,6 +39,7 @@ void lcd_init()
 	lcd_write_cmd( 0x06 );
 	delay( 50 );
 
+	// Sends the clear command
 	lcd_write_cmd( 0x01 );
 	delay( 50 );
 }
@@ -67,3 +68,29 @@ void lcd_clear()
 	delay( 10 );
 }
 
+void lcd_print_led_status( uint8 right_left, uint16 led_delay )
+{
+	char delay_string[16];
+
+	// Clear  Screen
+	lcd_clear();
+
+    // Write Direction
+	if ( right_left == 0 )
+	{
+		lcd_print_array( "Direction: Left");
+	}
+	else 
+	{
+		lcd_print_array( "Direction: Right");	
+	}
+
+	// Changes to second line
+	lcd_write_cmd( 0xC0 );
+
+	// Convert delay to string
+	sprintf( delay_string, "Delay: %u ms", led_delay );
+
+	// Print Delay
+	lcd_print_array( delay_string);
+}

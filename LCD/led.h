@@ -12,6 +12,7 @@
 #include "main.h"
 #include "PORT.H"
 
-uint8 led(uint8 left_right, uint8 index);
+// Changes LED port values
+uint8 led(uint8 right_left, int index);
 
 #endif

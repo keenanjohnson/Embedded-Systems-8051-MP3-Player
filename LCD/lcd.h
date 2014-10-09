@@ -12,6 +12,7 @@
 #include "delay.h"
 #include "Main.h"
 #include "PORT.h"
+#include <stdio.h>
 
 #define NUL (0x00)
 
@@ -26,6 +27,9 @@ void lcd_init();
 
 // Prints a nul terminated character array to LCD screen
 void lcd_print_array( uint8 *array );
+
+// Prints direction and speed of led flash
+void lcd_print_led_status( uint8 right_left, uint16 led_delay );
 
 // Clears the LCD screen
 void lcd_clear();
