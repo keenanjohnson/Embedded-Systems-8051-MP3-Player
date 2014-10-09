@@ -1,3 +1,11 @@
+// lcd.c
+//
+// Keenan Johnson
+// Franco Santa-Maria
+//
+// CpE 4160
+// FALL 2014
+
 #include "lcd.h"
 
 void lcd_write_cmd( uint8 cmd )
@@ -13,7 +21,7 @@ void lcd_write_data( uint8 dat )
 {
     RS = 1;
     E = 1;
-    P0 = data;
+    P0 = dat;
     E = 0;
     P0 = 0xFF;
 }

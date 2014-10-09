@@ -1,3 +1,11 @@
+// delay.h
+//
+// Keenan Johnson
+// Franco Santa-Maria
+//
+// CpE 4160
+// FALL 2014
+
 #include "delay.h"
 
 void delay( uint32 ms_to_delay )

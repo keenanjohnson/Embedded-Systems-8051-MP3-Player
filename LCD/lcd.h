@@ -1,3 +1,11 @@
+// lcd.h
+//
+// Keenan Johnson
+// Franco Santa-Maria
+//
+// CpE 4160
+// FALL 2014
+
 #ifndef _LCD_H
 #define _LCD_H
 

@@ -1,3 +1,11 @@
+// delay.h
+//
+// Keenan Johnson
+// Franco Santa-Maria
+//
+// CpE 4160
+// FALL 2014
+
 #ifndef _DELAY_H
 #define _DELAY_H
 
