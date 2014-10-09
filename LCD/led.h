@@ -11,8 +11,7 @@
 
 #include "main.h"
 #include "PORT.H"
-#include "delay.h"
 
-void led();
+uint8 led(uint8 left_right, uint8 index);
 
 #endif

@@ -8,31 +8,26 @@
 
 #include "led.h"
 
-static uint8 code states[] = {0x8F, 0x4F, 0x2F, 0x1F};
-static uint8 num_states = 4;
+static uint8 code states[] = {0x80, 0x40, 0x20, 0x10};
+static uint8 code num_states = 4;
 
-void led()
+uint8 led(uint8 left_right, uint8 index)
 {
-	uint8 i = 0;
-	uint32 led_delay=1000;
-	uint8 left_right=1;
-
-	while (left_right == 1)
+	if ( left_right == 1 )
 	{
-		if ( i == num_states)
-			i=0;
-
-		P2=~states[i];
-		i++;
-		delay(led_delay);
+		P2=~states[index];
+		index++;
+		if ( index == num_states )
+		{
+			index=0;
+		}
+		return index;
 	}
-
-	while (left_right != 0)
+	P2=~states[index];
+	index--;
+	if ( index < 0 )
 	{
-		if ( i < 0 )
-			i= num_states-1;
-		P2=~states[i];
-		i--;
-		delay(led_delay);
+		index=num_states-1;
 	}
+	return index;
 }
