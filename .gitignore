@@ -9,4 +9,5 @@
 *.BAK
 lcd
 uart
+spi
 
