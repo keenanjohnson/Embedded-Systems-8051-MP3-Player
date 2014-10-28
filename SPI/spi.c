@@ -72,6 +72,9 @@ uint16 spi_transfer( uint8 send_value )
     uint16 data_output;
 	uint16 timeout;
     timeout = 0;
+	
+	//Select device
+	SPI_nCS0=0;
     
     // Write Byte to be sent
     SPDAT = send_value;
@@ -94,6 +97,9 @@ uint16 spi_transfer( uint8 send_value )
         data_output = 1;	
     }
     
+	//Deselect device after receiving
+	SPI_nCS0=1;
+	
     // Return 
     return data_output;
 }
