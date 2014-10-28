@@ -61,6 +61,9 @@ uint8 spi_master_init( uint32 clock_rate )
         SPCON = 0x70;
     }
     
+	// Set CS to high
+	SPI_nCS0 = 1;
+
     // Return error status
     return error_status;
 }
@@ -69,7 +72,7 @@ uint16 spi_transfer( uint8 send_value )
 {
     // Variable Init
     uint8 spi_status;
-    uint16 data_output;
+    uint16 error_status;
 	uint16 timeout;
     timeout = 0;
     
@@ -86,14 +89,14 @@ uint16 spi_transfer( uint8 send_value )
     if(timeout != 0)
     {
 		// Check for error condition
-        data_output = (SPSTA & 0x70) << 8;
-        data_output |= SPDAT;
+        error_status = (SPSTA & 0x70) << 8;
+        error_status |= SPDAT;
     }
     else // Timed out
     {
-        data_output = 1;	
+       error_status = 0x8000;	
     }
 	
     // Return 
-    return data_output;
+    return error_status;
 }
