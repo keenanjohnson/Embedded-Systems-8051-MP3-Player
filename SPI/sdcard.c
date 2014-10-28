@@ -13,6 +13,7 @@
 uint8 initalize_card()
 {
 	uint8 response[6];
+	uint8 i;
 	
 	//Initialize the SPI peripheral to a maximum of 400khz
 	spi_master_init(400000);
@@ -21,7 +22,7 @@ uint8 initalize_card()
 	//This allows the SD card to receive the necessary 74
 	//clock pulses to complete its setup routine
 	printf("Sending 80 clock pulses");
-	for(uint8 i=0;i<=10;i++)
+	for(i=0;i<=10;i++)
 	{
 		spi_transfer(0xFF);
 	}
