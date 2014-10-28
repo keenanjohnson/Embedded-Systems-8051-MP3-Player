@@ -10,6 +10,11 @@
 
 #include "sdcard.h"
 
+uint8 initalize_card()
+{
+
+}
+
 uint8 send_command( uint8 command, uint32 argument )
 {
     

@@ -14,6 +14,9 @@
 #include "PORT.H"
 #include "Main.h"
 
+//Initialized SD card
+uint8 initialize_card();
+
 // Sends a command to the SD card
 uint8 send_command( uint8 command, uint32 argument );
 
