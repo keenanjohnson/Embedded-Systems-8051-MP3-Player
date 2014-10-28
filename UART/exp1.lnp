@@ -1,6 +1,0 @@
-"main.obj",
-"memory_test.obj",
-"print.obj",
-"uart.obj" 
-TO "exp1" 
-RAMSIZE(256) 
