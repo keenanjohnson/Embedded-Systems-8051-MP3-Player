@@ -12,7 +12,68 @@
 
 uint8 initalize_card()
 {
+	uint8 response[];
+	
+	//Initialize the SPI peripheral to a maximum of 400khz
+	spi_master_init(400000);
+	
+	//Transfers 10 bytes without selecting the peripheral
+	//This allows the SD card to receive the necessary 74
+	//clock pulses to complete its setup routine
+	printf("Sending 80 clock pulses");
+	for (int i=0;i<=10;i++)
+		spi_transfer(0xFF);
 
+	//Send CMD0 to SD card
+	nSC0=0;
+	printf("Sending CMD0");
+	send_command( 0 , 0x00000000 )
+	
+	//Waits for response from SD card and checks for expected value
+	printf("Waiting for response");
+	if (!receive_response( 1 , * response))
+	{
+		printf("Initialization Error: No Response");
+		return 1;
+	}
+	if (response[1] !=0x01)
+	{
+		printf("Initialization Error: Unexpected Response");
+		return 1;
+	}
+	printf("0x01 received");
+	nCS0=1;
+	
+	//0x01 received, send CMD8 to SD card
+	printf("sending CMD8");
+	nCS0=0;
+	send_command( 8 , 0x000001AA );
+	
+	//Waits for response from SD card and checks for expected value
+	printf("Waiting for response");
+	if (!receive response( 5 , * response)
+	{
+		printf("Initialization Error: No Response");
+		return 1; 
+	}
+	
+	//if the first byte is 0x01, four bytes will follow
+	if (response[1] == 0x01 && response[2] == 0x00 && response[3] == 0x00 && response[4] == 0x01 && response[5] == 0xAA)
+	{
+		printf("Response Received");
+	}
+	//if the first byte is 0x05, SD card is an old version and no more bytes will follow
+	else if (response[1] == 0x05)
+	{
+		printf("Version 1.x detected");
+	}
+	else
+	{
+		printf("Initialization Error: Unexpected Response");
+		return 1;
+	}
+	
+	//Response received, send CMD58
 }
 
 uint8 send_command( uint8 command, uint32 argument )

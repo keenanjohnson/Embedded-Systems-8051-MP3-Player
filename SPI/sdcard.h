@@ -13,6 +13,7 @@
 
 #include "PORT.H"
 #include "Main.h"
+#include "spi.h"
 
 //Initialized SD card
 uint8 initialize_card();
