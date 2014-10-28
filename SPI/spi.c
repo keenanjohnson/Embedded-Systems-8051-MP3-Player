@@ -19,11 +19,7 @@ uint8 spi_master_init( uint32 clock_rate )
 	// Calculate divisor
     divider = (uint8)(((OSC_FREQ / OSC_PER_INST) * 6) / clock_rate);
     
-	// Initial SPCON Setup
-    SPCON |= 0x70;
-    SPCON &= 0xF3;
-    
-	// Set rate correctly
+	// Set SPI Control Register
     if(divider > 128)
     {
         // Clock rate is out of range
@@ -31,44 +27,45 @@ uint8 spi_master_init( uint32 clock_rate )
     }
     else if(divider <= 128 && divider > 64)
     {
-        SPCON |= 0x82;
-        SPCON &= 0xFE;
+		// Divider is 128
+        SPCON = 0xF2;
     }
     else if(divider <=64 && divider > 32)
     {
-        SPCON |= 0x81;
-        SPCON &= 0xFD;
+		// Divider is 64
+        SPCON = 0xF1;
     }
     else if(divider <=32 && divider > 16)
     {
-        SPCON |= 0x80;
-        SPCON &= 0xFC;
+		// Divider is 32
+        SPCON = 0xF0;
     }
     else if(divider <= 16 && divider > 8)
     {
-        SPCON |= 0x03;
-        SPCON &= 0x7F;
+		// Divider is 16
+        SPCON = 0x73;
     }
     else if(divider <= 8 && divider > 4)
     {
-        SPCON |= 0x02;
-        SPCON &= 0x7E;
+		// Divider is 8
+        SPCON = 0x72;
     }
     else if(divider <= 4 && divider > 2)
     {
-        SPCON |= 0x01;
-        SPCON &= 0x7D;
+		// Divider is 4
+        SPCON = 0x71;
     }
     else
     {
-        SPCON &= 0x7C;
+		// Divisor is 2
+        SPCON = 0x70;
     }
     
-    // Return value
+    // Return error status
     return error_status;
 }
 
-uint16 spi_transter( uint8 send_value )
+uint16 spi_transfer( uint8 send_value )
 {
     // Variable Init
     uint8 spi_status;

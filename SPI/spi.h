@@ -19,6 +19,6 @@ uint8 spi_master_init( uint32 clock_rate );
 
 // Writes a byte specified by send_value
 // Out of the SPI bus
-uint16 spi_transter( uint8 send_value );
+uint16 spi_transfer( uint8 send_value );
 
 #endif // SPI_H
