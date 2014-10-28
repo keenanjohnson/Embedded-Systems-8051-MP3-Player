@@ -61,6 +61,9 @@ uint8 spi_master_init( uint32 clock_rate )
         SPCON = 0x70;
     }
     
+	// Set CS to high
+	SPI_nCS0 = 1;
+
     // Return error status
     return error_status;
 }
