@@ -12,14 +12,18 @@
 
 uint8 spi_master_init( uint32 clock_rate )
 {
+	// Variables
     uint8 divider;
     uint8 error_status = 0;
     
+	// Calculate divisor
     divider = (uint8)(((OSC_FREQ / OSC_PER_INST) * 6) / clock_rate);
     
+	// Initial SPCON Setup
     SPCON |= 0x70;
     SPCON &= 0xF3;
     
+	// Set rate correctly
     if(divider > 128)
     {
         // Clock rate is out of range
@@ -67,8 +71,9 @@ uint8 spi_master_init( uint32 clock_rate )
 uint16 spi_transter( uint8 send_value )
 {
     // Variable Init
-    uint8 test;
-    uint16 data_output, timeout;
+    uint8 spi_status;
+    uint16 data_output;
+	uint16 timeout;
     timeout = 0;
     
     // Write Byte to be sent
@@ -77,12 +82,13 @@ uint16 spi_transter( uint8 send_value )
     // Check for completed transfer
     do
     {
-        test = SPSTA;
+        spi_status = SPSTA;
         timeout++;
-    } while((test & 0x80) != 0x80 && timeout != 0);
+    } while( (spi_status & 0x80 ) != 0x80 && timeout != 0);
     
     if(timeout != 0)
     {
+		// Check for error condition
         data_output = (SPSTA & 0x70) << 8;
         data_output |= SPDAT;
     }
@@ -91,7 +97,6 @@ uint16 spi_transter( uint8 send_value )
         data_output = 1;	
     }
     
-    // Return r
+    // Return 
     return data_output;
 }
-
