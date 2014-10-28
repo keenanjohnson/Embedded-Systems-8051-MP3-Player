@@ -11,6 +11,8 @@
 #ifndef _PORT_H
 #define _PORT_H
 
+#include "Main.h"
+
 // Port 0
 sbit DB0 = P0^0;
 sbit DB1 = P0^1;

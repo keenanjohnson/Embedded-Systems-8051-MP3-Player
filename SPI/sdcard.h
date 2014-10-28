@@ -11,6 +11,9 @@
 #ifndef SDCARD_H
 #define SDCARD_H
 
+#include <stdio.h>
+
+#include "PORT.H"
 #include "spi.h"
 
 //Initialized SD card
