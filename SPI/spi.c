@@ -12,9 +12,8 @@
 
 uint8 spi_master_init( uint32 clock_rate )
 {
-    uint8 divider, return_val;
-    
-    error_status = 0;
+    uint8 divider;
+    uint8 error_status = 0;
     
     divider = (uint8)(((OSC_FREQ / OSC_PER_INST) * 6) / clock_rate);
     
@@ -62,7 +61,7 @@ uint8 spi_master_init( uint32 clock_rate )
     }
     
     // Return value
-    return return_val;
+    return error_status;
 }
 
 uint16 spi_transter( uint8 send_value )
@@ -89,7 +88,7 @@ uint16 spi_transter( uint8 send_value )
     }
     else // Timed out
     {
-        data_output = TIMEOUT_ERROR;	
+        data_output = 1;	
     }
     
     // Return r

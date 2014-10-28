@@ -15,11 +15,11 @@
 #include "uart.h"
 //#include "sdcard.h"
 #include "serial_ln.h"
-//#include "spi.h"
+#include "spi.h"
 
 void main(void)
 {
-	// Init UART
+	// Uart at 9600 baud
 	uart_init();
 
 	while(1)
