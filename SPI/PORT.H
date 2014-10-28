@@ -26,10 +26,10 @@ sbit DB7 = P0^7;
 //sbit P1_1 = P1^1;
 //sbit P1_2 = P1^2;
 //sbit P1_3 = P1^3;
-sbit nCS0 = P1^4;
-sbit MISO = P1^5;
-sbit SCK = P1^6;
-sbit MOSI = P1^7;
+sbit SPI_nCS0 = P1^4;
+sbit SPI_MISO = P1^5;
+sbit SPI_SCK = P1^6;
+sbit SPI_MOSI = P1^7;
 
 // Port 2
 sbit SW1 = P2^0;
