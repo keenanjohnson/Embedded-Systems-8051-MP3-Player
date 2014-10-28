@@ -19,6 +19,8 @@ uint8 spi_master_init( uint32 clock_rate );
 
 // Writes a byte specified by send_value
 // Out of the SPI bus
+// Chip select must be toggled outside of
+// This function
 uint16 spi_transfer( uint8 send_value );
 
 #endif // SPI_H
