@@ -22,8 +22,11 @@ void main(void)
 	// Uart at 9600 baud
 	uart_init();
 
+	// Setup SPI Hardware
+	spi_master_init( 400000 );
+
 	while(1)
 	{
-        
+        spi_transfer( 0x55 );    
 	}
 }
