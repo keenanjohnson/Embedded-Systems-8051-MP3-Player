@@ -3,6 +3,8 @@
 // Keenan Johnson
 // Franco Santa-Maria
 //
+// Submission for experiment 2
+//
 // CpE 4160
 // FALL 2014
 
