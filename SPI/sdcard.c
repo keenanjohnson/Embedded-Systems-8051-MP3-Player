@@ -21,7 +21,7 @@ uint8 initialize_card()
 	//Transfers 10 bytes without selecting the peripheral
 	//This allows the SD card to receive the necessary 74
 	//clock pulses to complete its setup routine
-	printf("Sending 80 clock pulses");
+	printf("Sending 73 bytes of clock pulse");
 	print_newline();
 
 	// Set chip select high
@@ -36,28 +36,27 @@ uint8 initialize_card()
 	SPI_nCS0 = 0;
 	printf("Sending CMD0");
 	print_newline();
-
 	send_command( 0 , 0x00000000 );
 	
 	//Waits for response from SD card and checks for expected value
 	printf("Waiting for response");
 	print_newline();
 
+	// Check for SPI error
 	if ( !receive_response( 1 , response) )
 	{
-		printf("Initialization Error: No Response\n");
+		printf("SPI Error: No Response\n");
 		print_newline();
-
 		return 1;
 	}
 
 	SPI_nCS0=1;
 
-	if (response[0] != 1)
+	// Check for good R1 response
+	if ( response[0] != 0x01 )
 	{
-		printf("Initialization Error: Unexpected Response");
+		printf("Initialization Error: Unexpected Response: %X", response[0]);
 		print_newline();
-
 		return 1;
 	}
 
@@ -99,7 +98,7 @@ uint8 initialize_card()
 		printf("Version 1.x detected");
 		print_newline();
 
-		version_1=1;
+		version_1 = 1;
 	}
 	else
 	{
@@ -495,6 +494,100 @@ uint8 receive_response( uint8 number_of_bytes, uint8 *response_array )
 
 uint8 read_block( uint16 number_of_bytes, uint8 *array )
 {
+	uint8 response[5];
+	uint16 timeout;
+	uint16 spi_response;
+	uint8 spi_data;
+	uint8 spi_error_status;
+	uint8 index;
+
+	// Check for good R1 response
+	printf("Read block");
+	printf("Waiting for R1 response...");
+	print_newline();
+
+	// Check for SPI error
+	if ( !receive_response( 1 , response) )
+	{
+		printf("SPI Error");
+		print_newline();
+		return 1;
+	}
+
+	// Check that R1 is 0x00
+	if ( response[0] != 0x00 )
+	{
+		printf("R1 Error");
+		print_newline();
+		return 1;
+	}
+
+	// Wait for data token
+	timeout = 0;
+	do
+	{
+		spi_response = spi_transfer( 0xFF );
+		spi_error_status = (spi_response >> 8);
+		spi_data = (spi_response & 0x00FF);
+		timeout++;
+	} while((timeout != 0) && (spi_data == 0xFF) && (spi_error_status == 0));
+
+	// Check for timeout 
+	if ( timeout == 0 )
+	{
+		// ABORT
+		return 1;
+	}
+	// Check for SPI error
+	if ( spi_error_status != 0x00 )
+	{
+		// ABORT
+		return 2;		
+	}
+	// Check if we got error token
+	if ( (spi_data & 0xF0) == 0xF0 )
+	{
+		// Receive error token
+		printf("Received error token");
+		print_newline();
+
+		return 1;
+	}
+
+	printf("Got the data start token");
+	print_newline();
+
+	// Receive data bytes
+	for ( index=0; index<number_of_bytes; index++ )
+	{
+		spi_response = spi_transfer( 0xFF );
+		spi_error_status = (spi_response >> 8);
+		spi_data = (spi_response & 0x00FF);
+
+		// Check for error
+		if ( spi_error_status != 0 )
+		{
+			printf("Error receiving block data");
+			print_newline();
+			return 1;
+		}
+		else // No errors
+		{
+			// Receive data
+			array[index] = spi_data;
+		}
+	}
+
+	// Discard checksum
+	printf("Received data. Sending three more bytes");
+	for(index = 0; index < 3; index++) //Discarding checksum (first two bytes)
+	{
+		spi_response = spi_transfer( 0xFF );
+	}
+
+	printf("Exiting print block");
+
+	// Return
 	return 0;	
 }
 

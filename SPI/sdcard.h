@@ -31,6 +31,8 @@ uint8 send_command( uint8 command, uint32 argument );
 uint8 receive_response( uint8 number_of_bytes, uint8 *response_array );
 
 // Reads a data block of specified size
+//
+// CS should be set external to this function
 uint8 read_block( uint16 number_of_bytes, uint8 *array );
 
 #endif //SDCARD_H
