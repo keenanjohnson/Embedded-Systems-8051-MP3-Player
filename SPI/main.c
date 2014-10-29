@@ -24,7 +24,7 @@
 void main(void)
 {
 	// Variable declaration
-	uint16 spi_error =0;
+	uint16 spi_error = 0;
 
 	// Uart at 9600 baud
 	uart_init();
@@ -35,8 +35,6 @@ void main(void)
 
 	while(1)
 	{
-		spi_error =	spi_transfer( 0x55 ); 
-   	    printf("SPI Value: %u", spi_error);
-		print_newline();
+		
 	}
 }

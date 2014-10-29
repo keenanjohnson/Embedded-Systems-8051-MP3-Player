@@ -27,6 +27,8 @@ uint8 initialize_card()
 	printf("Sending 80 clock pulses");
 	print_newline();
 
+	SPI_nCS0 = 1;
+
 	for(i=0;i<=10;i++)
 
 	{
@@ -260,10 +262,7 @@ uint8 send_command( uint8 command, uint32 argument )
 	// Variables
 	uint8 error_status = 0;
 	uint8 byte_to_send;
-	uint16 spi_status;
-	uint8 shift_amount;
-	uint8 i; 
-
+	uint16 spi_return;
 
 	// Check that command is only 6 bits
 	if ( command > 63 )
@@ -273,43 +272,96 @@ uint8 send_command( uint8 command, uint32 argument )
 		return error_status;
 	}		
 
-	// Apend start and transmission bits
-	byte_to_send = command | 0x40;
-
 	//////////////////
 	// Send Byte 1
 	// Command Byte
 	//////////////////
-	spi_status = spi_transfer( byte_to_send );
+	
+	// Apend start and transmission bits
+	command &= 0x7F;
+	command |= 0x40;
+	byte_to_send = command;
 
-	//////////////////////
-	// Send Bytes 2-5
-	// Argument
-	//////////////////////
+	// Send
+	spi_return = spi_transfer( byte_to_send );
 
-	// Start shift amount at 24
-	shift_amount = 24;
+	// Check for error
+	if((spi_return & 0xF000) != 0)
+    {
+		// Error
+		return 1;
+	}
 
-	// Send 4 bytes
-	for ( i=0; i++; i<4)
-	{
-		if((spi_status & 0xF000) == 0) // Check errors, 0 means no errors
-		{
-			// Shift argument to get correct byte
-			byte_to_send = ( argument >> shift_amount );
+   	//////////////////
+	// Send Byte 2
+	// Argument Byte
+	//////////////////
 
-			// Send out SPI
-			spi_status = spi_transfer(byte_to_send);
+	// Shift argument to get correct byte
+	byte_to_send = ( argument >> 24 );
 
-			// Decrement shift_amount by 8
-			shift_amount = shift_amount - 8; 
-		}
-		else  // Error Condition
-		{
-			// Set error flag and return
-			error_status = 1;
-			return error_status;
-		}
+	// Send out SPI
+	spi_return = spi_transfer(byte_to_send);
+
+	// Check for error
+	if((spi_return & 0xF000) != 0)
+    {
+		// Error & Abort
+		return 1;
+	}
+
+	//////////////////
+	// Send Byte 3
+	// Argument Byte
+	//////////////////
+
+	// Shift argument to get correct byte
+	byte_to_send = ( argument >> 16 ) & 0xFFUL;
+
+	// Send out SPI
+	spi_return = spi_transfer(byte_to_send);
+
+	// Check for error
+	if((spi_return & 0xF000) != 0)
+    {
+		// Error & Abort
+		return 1;
+	}
+
+	//////////////////
+	// Send Byte 4
+	// Argument Byte
+	//////////////////
+
+	// Shift argument to get correct byte
+	byte_to_send = ( argument >> 8 ) & 0xFFUL;
+
+	// Send out SPI
+	spi_return = spi_transfer(byte_to_send);
+
+	// Check for error
+	if((spi_return & 0xF000) != 0)
+    {
+		// Error & Abort
+		return 1;
+	}
+
+	//////////////////
+	// Send Byte 5
+	// Argument Byte
+	//////////////////
+
+	// Shift argument to get correct byte
+	byte_to_send = argument & 0xFFUL;
+
+	// Send out SPI
+	spi_return = spi_transfer(byte_to_send);
+
+	// Check for error
+	if((spi_return & 0xF000) != 0)
+    {
+		// Error & Abort
+		return 1;
 	}
 
 	//////////////////
@@ -317,31 +369,28 @@ uint8 send_command( uint8 command, uint32 argument )
 	// Checksum
 	//////////////////
 
-	if((spi_status & 0xF000) == 0)
+	// CMD 0
+	if( command == 0 )
 	{
-		// CMD 0
-		if( command == 0 )
-		{
-			byte_to_send = 0x95;
-		}
-
-		// CMD 8
-		else if( command == 8 )
-		{
-			byte_to_send = 0x87;
-		}
-
-		// Other
-		else
-		{
-			byte_to_send = 0x01;
-		}
-
-		error_status = spi_transfer( byte_to_send );
+		byte_to_send = 0x95;
 	}
+	// CMD 8
+	else if( command == 8 )
+	{
+		byte_to_send = 0x87;
+	}
+	// Other CMD
 	else
 	{
-		error_status = 1;
+		byte_to_send = 0x01;
+	}
+
+	// Send value and check for errors
+	spi_return = spi_transfer( byte_to_send );
+	if((spi_return & 0xF000) != 0)
+    {
+		// Error
+		return 1;
 	}
 
 	// Return error status
@@ -367,7 +416,7 @@ uint8 receive_response( uint8 number_of_bytes, uint8 *response_array )
 		spi_return = spi_transfer( 0xFF );
 
 	    // Get error status from transfer
-		error_status = ( spi_return & 0xF000 )>>8;
+		error_status = (spi_return & 0xF000)>>8;
 
 		// Get lower byte of spi return
 		response_value = spi_return & 0x00FF;
@@ -386,17 +435,23 @@ uint8 receive_response( uint8 number_of_bytes, uint8 *response_array )
 
 		// ABORT
 		return error_status;
-
 	}
 
 	// Check for SPI error
 	if ( error_status != 0x00 )
 	{
 		// Timeout error occured
-		error_status = 1;
+		error_status = 2;
 
 		// ABORT
 		return error_status;		
+	}
+
+	// Check R1 response for errors
+	if(!(response_value == 0x01 || response_value == 0x00))
+	{
+		// Error and abort
+		return 1;
 	}
 
 	// Assign reponse to buffer
@@ -414,6 +469,13 @@ uint8 receive_response( uint8 number_of_bytes, uint8 *response_array )
 			// Get data value
 			response_value = spi_return & 0x00FF;
 
+			// Check for error status
+			if((spi_return & 0xF000) != 0)
+		    {
+				// Error
+				return 1;
+			}
+
 			// Place data in response buffer
 			*( response_array + index) = response_value;
 		}
@@ -422,6 +484,12 @@ uint8 receive_response( uint8 number_of_bytes, uint8 *response_array )
 	// Send out final 0xFF
 	// Ignore received value
 	spi_transfer( 0xFF );
+
+	if((spi_return & 0xF000) != 0)
+    {
+		// Error
+		return 1;
+	}
 
 	// Return Error Status
 	return error_status;
