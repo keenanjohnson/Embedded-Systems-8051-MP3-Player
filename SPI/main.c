@@ -33,8 +33,10 @@ void main(void)
 	// at 400kHz
 	spi_master_init( 400000 );
 
+	// Init SD Card
+	initialize_card();
+
 	while(1)
-	{
-		
+	{		
 	}
 }

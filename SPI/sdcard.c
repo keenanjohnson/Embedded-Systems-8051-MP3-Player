@@ -18,22 +18,18 @@ uint8 initialize_card()
 	uint8 timeout=0x00;
 	uint8 version_1=0;
 	
-	//Initialize the SPI peripheral to a maximum of 400khz
-	spi_master_init(400000);
-	
 	//Transfers 10 bytes without selecting the peripheral
 	//This allows the SD card to receive the necessary 74
 	//clock pulses to complete its setup routine
 	printf("Sending 80 clock pulses");
 	print_newline();
 
+	// Set chip select high
 	SPI_nCS0 = 1;
 
-	for(i=0;i<=10;i++)
-
+	for(i=0;i<74;i++)
 	{
 		spi_transfer(0xFF);
-
 	}
 
 	//Send CMD0 to SD card
@@ -47,15 +43,17 @@ uint8 initialize_card()
 	printf("Waiting for response");
 	print_newline();
 
-	if ( !receive_response( 1 , &response) )
+	if ( !receive_response( 1 , response) )
 	{
 		printf("Initialization Error: No Response\n");
 		print_newline();
 
 		return 1;
 	}
+
 	SPI_nCS0=1;
-	if (response[1] !=0x01)
+
+	if (response[0] != 1)
 	{
 		printf("Initialization Error: Unexpected Response");
 		print_newline();
@@ -78,7 +76,7 @@ uint8 initialize_card()
 	printf("Waiting for response");
 	print_newline();
 
-	if ( !receive_response( 5 , &response) )
+	if ( !receive_response( 5 , response) )
 	{
 		printf("Initialization Error: No Response");
 		print_newline();
@@ -121,7 +119,7 @@ uint8 initialize_card()
 	printf("Waiting for response");
 	print_newline();
 
-	if ( !receive_response( 5 , &response) )
+	if ( !receive_response( 5 , response) )
 	{
 		printf("Initialization Error: No Response");
 		print_newline();
@@ -207,7 +205,7 @@ uint8 initialize_card()
 		printf("Waiting for response");
 		print_newline();
 
-		if ( !receive_response( 5 , &response) )
+		if ( !receive_response( 5 , response) )
 		{
 			printf("Initialization Error: No Response");
 			print_newline();
@@ -232,7 +230,7 @@ uint8 initialize_card()
 				print_newline();
 
 				send_command( 16 , 512 );
-				if ( !receive_response( 5 , &response) )
+				if ( !receive_response( 5 , response) )
 				{
 					printf("Initialization Error: No Response");
 					print_newline();
