@@ -72,9 +72,8 @@ uint16 spi_transfer( uint8 send_value )
 {
     // Variable Init
     uint8 spi_status;
-    uint16 error_status;
-	uint16 timeout;
-    timeout = 0;
+    uint16 spi_return;
+	uint16 timeout = 0;
     
     // Write Byte to be sent
     SPDAT = send_value;
@@ -88,15 +87,17 @@ uint16 spi_transfer( uint8 send_value )
     
     if(timeout != 0)
     {
-		// Check for error condition
-        error_status = (SPSTA & 0x70) << 8;
-        error_status |= SPDAT;
+		// Place error flags in return value
+        spi_return = (SPSTA & 0x70) << 8;
+
+		// Place data in return value
+        spi_return |= SPDAT;
     }
     else // Timed out
     {
-       error_status = 0x8000;	
+       spi_return = 0x8000;	
     }
 	
     // Return 
-    return error_status;
+    return spi_return;
 }

@@ -282,7 +282,85 @@ uint8 send_command( uint8 command, uint32 argument )
 	return error_status;   
 }
 
-uint8 receive_response( uint8 num_bytes, uint8 * response )
+uint8 receive_response( uint8 number_of_bytes, uint8 *response_array )
 {
-    
+	// Variable Declaration
+	uint8 error_status;
+	uint8 spi_return;
+	uint8 timeout_counter = 0;
+	uint8 response_value;
+	uint8 index;
+
+	// Send out 0xFF repeatedly
+	// Wait until received byte is
+	// not 0xFF or until a timeout
+	// has occured
+	do
+	{
+		// Send 0xFF
+		spi_return = spi_transfer( 0xFF );
+
+	    // Get error status from transfer
+		error_status = ( spi_return & 0xF000 )>>8;
+
+		// Get lower byte of spi return
+		response_value = spi_return & 0x00FF;
+
+		// Increment timeout counter
+		timeout_counter++;
+
+		// Check for valid response, error, or timeout
+	} while( (response_value == 0xFF) && (error_status == 0x00) && (timeout_counter != 0) );
+
+	// Check for timeout 
+	if ( timeout_counter == 0 )
+	{
+		// Timeout error occured
+		error_status = 1;
+
+		// ABORT
+		return error_status;
+	}
+
+	// Check for SPI error
+	if ( error_status != 0x00 )
+	{
+		// Timeout error occured
+		error_status = 1;
+
+		// ABORT
+		return error_status;		
+	}
+
+	// Assign reponse to buffer
+	*response_array = response_value;
+
+	// Check if there are more bytes in the response
+	if( number_of_bytes > 1 )
+	{
+		// Get remaining bytes in response
+		for(index = 1; index < number_of_bytes; index++)
+		{
+			// Get SPI return
+			spi_return = spi_transfer( 0xFF );
+
+			// Get data value
+			response_value = spi_return & 0x00FF;
+
+			// Place data in response buffer
+			*( response_array + index) = response_value;
+		}
+	}
+
+	// Send out final 0xFF
+	// Ignore received value
+	spi_transfer( 0xFF );
+	
+	// Return Error Status
+	return error_status;
+}
+
+uint8 read_block( uint16 number_of_bytes, uint8 *array )
+{
+	
 }
