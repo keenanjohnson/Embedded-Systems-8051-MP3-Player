@@ -10,7 +10,7 @@
 
 #include "sdcard.h"
 
-uint8 initalize_card()
+uint8 initialize_card()
 {
 	uint8 response[6];
 	uint8 i;
@@ -362,5 +362,5 @@ uint8 receive_response( uint8 number_of_bytes, uint8 *response_array )
 
 uint8 read_block( uint16 number_of_bytes, uint8 *array )
 {
-	
+	return 0;	
 }

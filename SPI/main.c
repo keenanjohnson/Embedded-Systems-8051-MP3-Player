@@ -34,7 +34,7 @@ void main(void)
 	spi_master_init( 400000 );
 
 	// Init SD card
-	initalize_card();
+	initialize_card()
 
 	//Increase SPI to 
 	// 25 MHz
