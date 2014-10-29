@@ -43,4 +43,10 @@ void print_line( uint8 *first_byte );
 /////////////////////////////////////////////////
 void print_mem_block( uint8 *start_addr, uint16 num_bytes );
 
+//////////////////////
+// Prints the CR
+//  and LF Characters
+//////////////////////
+void print_newline();
+
 #endif

@@ -34,7 +34,7 @@ void main(void)
 	spi_master_init( 400000 );
 
 	// Init SD card
-	initialize_card()
+	initialize_card();
 
 	//Increase SPI to 
 	// 25 MHz
@@ -43,10 +43,10 @@ void main(void)
 	while(1)
 	{
     	// Ask user for block number to read
-		printf( "Enter block number: " );
+		//printf( "Enter block number: " );
 		
 		// Read in block number
-    	user_block = long_serial_input();
+    	//user_block = long_serial_input();
 		
 		// Send command 17
 

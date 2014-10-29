@@ -54,9 +54,8 @@ void print_mem_block( uint8 *start_addr, uint16 num_bytes )
     // Print heading
     printf("Addr.  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F");
     
-    // Add carriage return and linefeed
-    putchar( CR );
-    putchar( LF );
+    // Newline
+    print_newline();
 
     // Adjust start addr to nearest 16 byte boundary
     index = (uint16) start_addr;
@@ -73,8 +72,14 @@ void print_mem_block( uint8 *start_addr, uint16 num_bytes )
         // Increment index
         index += 16;
         
-        // Add carriage return and linefeed
-        putchar( CR );
-        putchar( LF );
+        print_newline();
     }
 }
+
+void print_newline()
+{
+	// Add carriage return and linefeed
+	putchar( CR );
+    putchar( LF );
+}
+
