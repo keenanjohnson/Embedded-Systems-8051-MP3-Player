@@ -23,8 +23,12 @@
 
 void main(void)
 {
-	// Variable declaration
-	uint16 spi_error = 0;
+	//variables
+	xdata uint8 mem_block[512];
+	uint32 user_input;
+
+	// Access more RAM
+	AUXR = 0x0C;
 
 	// Uart at 9600 baud
 	uart_init();
@@ -36,7 +40,20 @@ void main(void)
 	// Init SD Card
 	initialize_card();
 
+	//Set SPI interface to max speed
+	spi_master_init( 8000000 );
+
 	while(1)
-	{		
+	{
+		// Get user input
+		printf( "Please enter a block to read:" );
+		print_newline();
+		user_input = long_serial_input();
+
+		printf( "User input: %2.2bX", user_input );
+
+		//read a block of memory from SD card
+		//read_block();
 	}
 }
+

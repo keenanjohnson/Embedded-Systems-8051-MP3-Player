@@ -17,35 +17,40 @@ uint8 initialize_card()
 	uint8 card_type=0;
 	uint8 timeout=0x00;
 	uint8 version_1=0;
+	uint16 spi_return;
+	uint8 cmd_error_status;
 	
 	//Transfers 10 bytes without selecting the peripheral
 	//This allows the SD card to receive the necessary 74
 	//clock pulses to complete its setup routine
-	printf("Sending 73 bytes of clock pulse");
+	printf("Sending 10 bytes of clock pulse");
 	print_newline();
 
 	// Set chip select high
 	SPI_nCS0 = 1;
 
-	for(i=0;i<74;i++)
+	for(i=0;i<10;i++)
 	{
 		spi_transfer(0xFF);
 	}
 
 	//Send CMD0 to SD card
 	SPI_nCS0 = 0;
-	printf("Sending CMD0");
-	print_newline();
-	send_command( 0 , 0x00000000 );
-	
-	//Waits for response from SD card and checks for expected value
-	printf("Waiting for response");
+	printf("Sending CMD0...");
 	print_newline();
 
-	// Check for SPI error
-	if ( !receive_response( 1 , response) )
+	cmd_error_status = send_command( 0 , 0x00000000 );
+	if( cmd_error_status != 0 )
 	{
-		printf("SPI Error: No Response\n");
+		printf("Command Send Error");
+		print_newline();		
+	}
+
+	// Check for SPI error
+	spi_return = receive_response(1 , response);
+	if ( spi_return != 0 )
+	{
+		printf( "SPI Error Status %2.2bX", spi_return );
 		print_newline();
 		return 1;
 	}
@@ -53,9 +58,9 @@ uint8 initialize_card()
 	SPI_nCS0=1;
 
 	// Check for good R1 response
-	if ( response[0] != 0x01 )
+	if ( response[0] != 1 )
 	{
-		printf("Initialization Error: Unexpected Response: %X", response[0]);
+		printf("Initialization Error: Unexpected Response: %2.2bX", response[0]);
 		print_newline();
 		return 1;
 	}
@@ -64,36 +69,32 @@ uint8 initialize_card()
 	print_newline();
 	
 	//0x01 received, send CMD8 to SD card
-	printf("sending CMD8");
+	printf("sending CMD8...");
 	print_newline();
 
 	// Set Chip Select Low
 	SPI_nCS0=0;
 	send_command( 8 , 0x000001AA );
 	
-	//Waits for response from SD card and checks for expected value
-	printf("Waiting for response");
-	print_newline();
-
-	if ( !receive_response( 5 , response) )
+	spi_return = receive_response(5 , response);
+	if ( spi_return != 0 )
 	{
-		printf("Initialization Error: No Response");
+		printf( "SPI Error Status %2.2bX", spi_return );
 		print_newline();
-
-		return 1; 
+		return 1;
 	}
 
 	// Set Chip Select High
 	SPI_nCS0=1;
 	
 	//if the first byte is 0x01, four bytes will follow
-	if (response[1] == 0x01 && response[2] == 0x00 && response[3] == 0x00 && response[4] == 0x01 && response[5] == 0xAA)
+	if (response[0] == 0x01 && response[1] == 0x00 && response[2] == 0x00 && response[3] == 0x01 && response[4] == 0xAA)
 	{
-		printf("Response received");
+		printf("Version 2.x detected");
 		print_newline();
 	}
 	//if the first byte is 0x05, SD card is an old version and no more bytes will follow
-	else if ( response[1] == 0x05 )
+	else if ( response[0] == 0x05 )
 	{
 		printf("Version 1.x detected");
 		print_newline();
@@ -102,58 +103,67 @@ uint8 initialize_card()
 	}
 	else
 	{
-		printf("Initialization Error: Unexpected Response");
+		printf("Initialization Error: Unexpected Response 1: %2.2bX", response[0]);
 		print_newline();
-
+		printf("Initialization Error: Unexpected Response 2: %2.2bX", response[1]);
+		print_newline();
+		printf("Initialization Error: Unexpected Response 3: %2.2bX", response[2]);
+		print_newline();
+	   	printf("Initialization Error: Unexpected Response 4: %2.2bX", response[3]);
+		print_newline();
+		printf("Initialization Error: Unexpected Response 5: %2.2bX", response[4]);
+		print_newline();
+		printf("Initialization Error: Unexpected Response 6: %2.2bX", response[5]);
+		print_newline();
 		return 1;
 	}
 	
 	//Response received, send CMD58
-	printf("sending CMD58");
+	printf("sending CMD58...");
 	print_newline();
 
 	SPI_nCS0=0;
 	send_command( 58 , 0x00000000 );
-	
-	printf("Waiting for response");
-	print_newline();
 
-	if ( !receive_response( 5 , response) )
+	spi_return = receive_response( 5 , response);
+	if ( spi_return != 0 )
 	{
-		printf("Initialization Error: No Response");
+		printf( "SPI Error Status %2.2bX", spi_return );
 		print_newline();
-
-		return 1; 
+		return 1;
 	}
 	SPI_nCS0=1;
 	
-	if ( !response[1] == 0x3F )
+	if ( response[0] != 0x01 )
 	{
-		printf("Initialization Error: Unexpected Response");
+		printf("Initialization Error: Unexpected Response: %2.2bX", response[0]);
 		print_newline();
-
 		return 1;
 	}
-	printf("Response received");
-	print_newline();
-	
+
 	//check that SD card voltage range is acceptable
-	if ( (((response[4] & 0x08) != 0x08) && ((response[4] & 0x04) != 0x04)) )
+	if ( ((response[2] & 0x3C) != 0x3C) )
 	{
 		printf("Initialization error: Voltage not compatible");
 		print_newline();
-
+		printf("%2.2bX", response[0]);
+		printf(" %2.2bX", response[1]);
+	 	printf(" %2.2bX", response[2]); 
+		printf(" %2.2bX", response[3]);
+	 	printf(" %2.2bX", response[4]);
+		print_newline();
 		return 1;
 	}
 	
 	else
 	{
-		printf("SDSC found");
+		printf("SD Card Voltage Compatible");
 		print_newline();
 	}
 	
 	//send CMD55 followed by ACMD41 until card returns ready
 	SPI_nCS0=0;
+	timeout=0;
 	do
 	{
 		//send CMD55
@@ -161,39 +171,73 @@ uint8 initialize_card()
 		print_newline();
 
 		send_command( 55 , 0x00000000 );
+
+		spi_return = receive_response( 1 , response );
+		if ( spi_return != 0 )
+		{
+			printf( "SPI Error Status %2.2bX", spi_return );
+			print_newline();
+			return 1;
+		}
 		
+		if ( response[0] != 0x01 )
+		{
+			printf("Initialization Error: Unexpected Response: %2.2bX", response[0]);
+			print_newline();
+			return 1;
+		}
+
 		//send ACMD41. Older versions should have an argument of 0.
 		//Newer versions should have an argument of 2 for the last nibble
 		printf("sending ACMD41");
 		print_newline();
 
-		if (!version_1)
+		if ( version_1 == 0 )
 		{
-			send_command( 41 , 0x00000002 );
+			send_command( 41 , 0x40000000 );
 		}
 		else
 		{
 			send_command( 41 , 0x00000000 );
 		}
-		if (response[1] == 0x00)
+
+		spi_return = receive_response( 1 , response );
+		if ( spi_return != 0 )
 		{
+			printf( "SPI Error Status %2.2bX", spi_return );
+			print_newline();
+			return 1;
+		}
+
+		if (response[0] == 0x00)
+		{
+	   		printf("Active State Received");
+			print_newline();
 			break;
 		}
-		else if (response[1] == 0x01)
-		{}
+		else if (response[0] == 0x01)
+		{
+			printf("Idle State Received");
+			print_newline();
+		}
 		else
 		{
-			printf("Initialization error: unexpected response");
+			printf("Initialization Error: Unexpected Response: %2.2bX", response[0]);
 			print_newline();
-
 			return 1;
 		}
 		timeout++;
-	} while ( timeout != 0x00 );
+		if ( timeout == 0x00 )
+		{
+			printf("Initialization Error: ACMD41 timeout");
+			print_newline;
+			return 1;
+		}
+	} while ( 1 );
 	SPI_nCS0=1;
 	
 	//V2 cards require CMD58 again to check capacity
-	if (!version_1)
+	if ( version_1 == 0 )
 	{
 		printf("sending CMD58");
 		print_newline();
@@ -204,47 +248,46 @@ uint8 initialize_card()
 		printf("Waiting for response");
 		print_newline();
 
-		if ( !receive_response( 5 , response) )
+		spi_return = receive_response( 5 , response);
+		if ( spi_return != 0 )
 		{
-			printf("Initialization Error: No Response");
+			printf( "SPI Error Status %2.2bX", spi_return );
 			print_newline();
-
-			return 1; 
+			return 1;
 		}
 		SPI_nCS0=1;
-		
-		if ( (response[5] & 0x01) == 0x01 )
+
+		if ( (response[1] & 0xC0)  == 0xC0 )
 		{
-			if ( ((response[5] & 0x02) == 0x02)  )
+			printf("SDHC/XC found");
+			print_newline();
+			card_type = 1;
+		}
+		//if SDSC is found, set block size to 512 bytes
+		else if ( (response[1] & 0xC0) == 0x80 )
+		{
+			printf("SDSC found. Sending CMD16");
+			print_newline();
+
+			send_command( 16 , 512 );
+			spi_return = receive_response( 1 , response );
+			if ( spi_return != 0 )
 			{
-				printf("SDHC/XC found");
+				printf( "SPI Error Status %2.2bX", spi_return );
 				print_newline();
-
-				card_type = 1;
+				return 1;
 			}
-			//if SDSC is found, set block size to 512 bytes
-			else
-			{
-				printf("SDSC found. Sending CMD16");
-				print_newline();
-
-				send_command( 16 , 512 );
-				if ( !receive_response( 5 , response) )
-				{
-					printf("Initialization Error: No Response");
-					print_newline();
-
-					return 1; 
-				}
-				printf("Block size set to 512 bytes");
-				print_newline();
-			}
+			printf("Block size set to 512 bytes");
+			print_newline();
 		}
 		else
 		{
-			printf("Initialization Error: Invalid response");
+			printf("Initialization Error: Unexpected Response: %2.2bX", response[0]);
+			printf("%2.2bX", response[1]);
+			printf("%2.2bX", response[2]);
+			printf("%2.2bX", response[3]);
+			printf("%2.2bX", response[4]);
 			print_newline();
-
 			return 1;
 		}
 	}
@@ -260,6 +303,7 @@ uint8 send_command( uint8 command, uint32 argument )
 	uint8 error_status = 0;
 	uint8 byte_to_send;
 	uint16 spi_return;
+	uint8 first_byte;
 
 	// Check that command is only 6 bits
 	if ( command > 63 )
@@ -275,9 +319,10 @@ uint8 send_command( uint8 command, uint32 argument )
 	//////////////////
 	
 	// Apend start and transmission bits
-	command &= 0x7F;
-	command |= 0x40;
-	byte_to_send = command;
+	first_byte = command;
+	first_byte &= 0x7F;
+	first_byte |= 0x40;
+	byte_to_send = first_byte;
 
 	// Send
 	spi_return = spi_transfer( byte_to_send );
@@ -399,7 +444,7 @@ uint8 receive_response( uint8 number_of_bytes, uint8 *response_array )
 	// Variable Declaration
 	uint8 error_status;
 	uint8 spi_return;
-	uint8 timeout_counter = 0;
+	uint8 timeout_counter = 1;
 	uint8 response_value;
 	uint8 index;
 
@@ -419,7 +464,7 @@ uint8 receive_response( uint8 number_of_bytes, uint8 *response_array )
 		response_value = spi_return & 0x00FF;
 
 		// Increment timeout counter
-		timeout_counter++;
+	    // timeout_counter++;
 
 		// Check for valid response, error, or timeout
 	} while( (response_value == 0xFF) && (error_status == 0x00) && (timeout_counter != 0) );
@@ -445,10 +490,10 @@ uint8 receive_response( uint8 number_of_bytes, uint8 *response_array )
 	}
 
 	// Check R1 response for errors
-	if(!(response_value == 0x01 || response_value == 0x00))
+	if( !(response_value == 0x01 || response_value == 0x00) )
 	{
 		// Error and abort
-		return 1;
+		return 3;
 	}
 
 	// Assign reponse to buffer
@@ -470,7 +515,7 @@ uint8 receive_response( uint8 number_of_bytes, uint8 *response_array )
 			if((spi_return & 0xF000) != 0)
 		    {
 				// Error
-				return 1;
+				return 4;
 			}
 
 			// Place data in response buffer
@@ -485,7 +530,7 @@ uint8 receive_response( uint8 number_of_bytes, uint8 *response_array )
 	if((spi_return & 0xF000) != 0)
     {
 		// Error
-		return 1;
+		return 5;
 	}
 
 	// Return Error Status
@@ -590,4 +635,3 @@ uint8 read_block( uint16 number_of_bytes, uint8 *array )
 	// Return
 	return 0;	
 }
-
