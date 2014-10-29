@@ -42,7 +42,7 @@ uint8 spi_master_init( uint32 clock_rate )
     }
     else if(divider <= 16 && divider > 8)
     {
-		// Divider is 16
+    	// Divider is 16
         SPCON = 0x73;
     }
     else if(divider <= 8 && divider > 4)
@@ -73,9 +73,10 @@ uint16 spi_transfer( uint8 send_value )
     // Variable Init
     uint8 spi_status;
     uint16 spi_return;
+
 	uint16 timeout = 0;
     
-    // Write Byte to be sent
+    // Write Byte to be sent to SPI
     SPDAT = send_value;
     
     // Check for completed transfer
@@ -85,7 +86,7 @@ uint16 spi_transfer( uint8 send_value )
         timeout++;
     } while( (spi_status & 0x80 ) != 0x80 && timeout != 0);
     
-    if(timeout != 0)
+    if( timeout != 0 )
     {
 		// Place error flags in return value
         spi_return = (SPSTA & 0x70) << 8;
@@ -95,9 +96,10 @@ uint16 spi_transfer( uint8 send_value )
     }
     else // Timed out
     {
-       spi_return = 0x8000;	
+       spi_return = TIMEOUT_ERR;	
     }
 	
     // Return 
     return spi_return;
 }
+

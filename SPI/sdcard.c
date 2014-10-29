@@ -38,6 +38,7 @@ uint8 initialize_card()
 	SPI_nCS0 = 0;
 	printf("Sending CMD0");
 	print_newline();
+
 	send_command( 0 , 0x00000000 );
 	
 	//Waits for response from SD card and checks for expected value

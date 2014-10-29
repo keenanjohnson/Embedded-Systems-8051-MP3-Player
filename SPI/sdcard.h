@@ -29,3 +29,4 @@ uint8 receive_response( uint8 number_of_bytes, uint8 *response_array );
 uint8 read_block( uint16 number_of_bytes, uint8 *array );
 
 #endif //SDCARD_H
+

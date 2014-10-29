@@ -24,7 +24,7 @@
 void main(void)
 {
 	// Variable declaration
-	uint32 user_block;
+	uint16 spi_error =0;
 
 	// Uart at 9600 baud
 	uart_init();
@@ -33,27 +33,10 @@ void main(void)
 	// at 400kHz
 	spi_master_init( 400000 );
 
-	// Init SD card
-	initialize_card();
-
-	//Increase SPI to 
-	// 25 MHz
-	spi_master_init( 25000000 );
-
 	while(1)
 	{
-    	// Ask user for block number to read
-		//printf( "Enter block number: " );
-		
-		// Read in block number
-    	//user_block = long_serial_input();
-		
-		// Send command 17
-
-		// Read block
-		//uint8 read_block( uint16 number_of_bytes, uint8 *array )
-		
-		// print Block
-		//print_line( uint8 *first_byte )       
+		spi_error =	spi_transfer( 0x55 ); 
+   	    printf("SPI Value: %u", spi_error);
+		print_newline();
 	}
 }
