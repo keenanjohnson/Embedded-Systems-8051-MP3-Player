@@ -14,6 +14,9 @@ uint8 initalize_card()
 {
 	uint8 response[6];
 	uint8 i;
+	uint8 card_type=0;
+	uint8 timeout=0x00;
+	uint8 version_1=0;
 	
 	//Initialize the SPI peripheral to a maximum of 400khz
 	spi_master_init(400000);
@@ -39,13 +42,13 @@ uint8 initalize_card()
 		printf("Initialization Error: No Response");
 		return 1;
 	}
+	SPI_nCS0=1;
 	if (response[1] !=0x01)
 	{
 		printf("Initialization Error: Unexpected Response");
 		return 1;
 	}
 	printf("0x01 received");
-	SPI_nCS0=1;
 	
 	//0x01 received, send CMD8 to SD card
 	printf("sending CMD8");
@@ -59,16 +62,18 @@ uint8 initalize_card()
 		printf("Initialization Error: No Response");
 		return 1; 
 	}
+	SPI_nCS0=1;
 	
 	//if the first byte is 0x01, four bytes will follow
 	if (response[1] == 0x01 && response[2] == 0x00 && response[3] == 0x00 && response[4] == 0x01 && response[5] == 0xAA)
 	{
-		printf("Response Received");
+		printf("Response received");
 	}
 	//if the first byte is 0x05, SD card is an old version and no more bytes will follow
 	else if ( response[1] == 0x05 )
 	{
 		printf("Version 1.x detected");
+		version_1=1;
 	}
 	else
 	{
@@ -77,6 +82,114 @@ uint8 initalize_card()
 	}
 	
 	//Response received, send CMD58
+	printf("sending CMD58");
+	SPI_nCS0=0;
+	send_command( 58 , 0x00000000 );
+	
+	printf("Waiting for response");
+	if ( !receive_response( 5 , &response) )
+	{
+		printf("Initialization Error: No Response");
+		return 1; 
+	}
+	SPI_nCS0=1;
+	
+	if ( !response[1] == 0x3F )
+	{
+		printf("Initialization Error: Unexpected Response");
+		return 1;
+	}
+	printf("Response received");
+	
+	//check that SD card voltage range is acceptable
+	if ( (((response[4] & 0x08) != 0x08) && ((response[4] & 0x04) != 0x04)) )
+	{
+		printf("Initialization error: Voltage not compatible");
+		return 1;
+	}
+	
+	else
+	{
+		printf("SDSC found");
+	}
+	
+	//send CMD55 followed by ACMD41 until card returns ready
+	SPI_nCS0=0;
+	do
+	{
+		//send CMD55
+		printf("sending CMD55");
+		send_command( 55 , 0x00000000 );
+		
+		//send ACMD41. Older versions should have an argument of 0.
+		//Newer versions should have an argument of 2 for the last nibble
+		printf("sending ACMD41");
+		if (!version_1)
+		{
+			send_command( 41 , 0x00000002 );
+		}
+		else
+		{
+			send_command( 41 , 0x00000000 );
+		}
+		if (response[1] == 0x00)
+		{
+			break;
+		}
+		else if (response[1] == 0x01)
+		{}
+		else
+		{
+			printf("Initialization error: unexpected response");
+			return 1;
+		}
+		timeout++;
+	} while ( timeout != 0x00 );
+	SPI_nCS0=1;
+	
+	//V2 cards require CMD58 again to check capacity
+	if (!version_1)
+	{
+		printf("sending CMD58");
+		SPI_nCS0=0;
+		send_command( 58 , 0x00000000 );
+		
+		printf("Waiting for response");
+		if ( !receive_response( 5 , &response) )
+		{
+			printf("Initialization Error: No Response");
+			return 1; 
+		}
+		SPI_nCS0=1;
+		
+		if ( (response[5] & 0x01) == 0x01 )
+		{
+			if ( ((response[5] & 0x02) == 0x02)  )
+			{
+				printf("SDHC/XC found");
+				card_type = 1;
+			}
+			//if SDSC is found, set block size to 512 bytes
+			else
+			{
+				printf("SDSC found. Sending CMD16");
+				send_command( 16 , 512 );
+				if ( !receive_response( 5 , &response) )
+				{
+					printf("Initialization Error: No Response");
+					return 1; 
+				}
+				printf("Block size set to 512 bytes");
+			}
+		}
+		else
+		{
+			printf("Initialization Error: Invalid response");
+			return 1;
+		}
+	}
+	printf("Initialization successful");
+	return 0;
 }
 
 uint8 send_command( uint8 command, uint32 argument )
