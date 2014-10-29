@@ -14,7 +14,6 @@
 
 #include "Main.h"
 #include "PORT.h"
-#include "delay.h"
 #include "uart.h"
 #include "print.h"
 #include "sdcard.h"
@@ -50,10 +49,20 @@ void main(void)
 		print_newline();
 		user_input = long_serial_input();
 
-		printf( "User input: %2.2bX", user_input );
+		// Set chip select low
+		SPI_nCS0 = 0;
 
-		//read a block of memory from SD card
-		//read_block();
+		// Send CMD 17
+		send_command( 17 , user_input );
+
+		// Receive data block
+		read_sd_block( 512, mem_block );
+
+		// Set Chip Select High
+		SPI_nCS0 = 1;
+
+		// Print Receive block
+		print_mem_block( mem_block, 512 );
 	}
 }
 

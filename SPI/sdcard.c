@@ -230,7 +230,7 @@ uint8 initialize_card()
 		if ( timeout == 0x00 )
 		{
 			printf("Initialization Error: ACMD41 timeout");
-			print_newline;
+			print_newline();
 			return 1;
 		}
 	} while ( 1 );
@@ -537,22 +537,24 @@ uint8 receive_response( uint8 number_of_bytes, uint8 *response_array )
 	return error_status;
 }
 
-uint8 read_block( uint16 number_of_bytes, uint8 *array )
+uint8 read_sd_block( uint16 number_of_bytes, uint8 *array )
 {
 	uint8 response[5];
 	uint16 timeout;
 	uint16 spi_response;
 	uint8 spi_data;
 	uint8 spi_error_status;
-	uint8 index;
+	uint16 index;
 
 	// Check for good R1 response
 	printf("Read block");
+	print_newline();
 	printf("Waiting for R1 response...");
 	print_newline();
 
 	// Check for SPI error
-	if ( !receive_response( 1 , response) )
+	spi_response = receive_response(5 , response);
+	if ( spi_response != 0 )
 	{
 		printf("SPI Error");
 		print_newline();
@@ -580,17 +582,23 @@ uint8 read_block( uint16 number_of_bytes, uint8 *array )
 	// Check for timeout 
 	if ( timeout == 0 )
 	{
+		printf("Read Block Timeout");
+		print_newline();
+
 		// ABORT
 		return 1;
 	}
 	// Check for SPI error
 	if ( spi_error_status != 0x00 )
 	{
+		printf("Read Block SPI Error");
+		print_newline();
+		
 		// ABORT
 		return 2;		
 	}
-	// Check if we got error token
-	if ( (spi_data & 0xF0) == 0xF0 )
+	// Check if we got start token
+	if ( spi_data != 0xFE )
 	{
 		// Receive error token
 		printf("Received error token");
@@ -603,11 +611,11 @@ uint8 read_block( uint16 number_of_bytes, uint8 *array )
 	print_newline();
 
 	// Receive data bytes
-	for ( index=0; index<number_of_bytes; index++ )
+	for ( index=0; index<(number_of_bytes-1); index++ )
 	{
 		spi_response = spi_transfer( 0xFF );
 		spi_error_status = (spi_response >> 8);
-		spi_data = (spi_response & 0x00FF);
+		spi_data = (spi_response & 0x00FF);	
 
 		// Check for error
 		if ( spi_error_status != 0 )
@@ -625,13 +633,17 @@ uint8 read_block( uint16 number_of_bytes, uint8 *array )
 
 	// Discard checksum
 	printf("Received data. Sending three more bytes");
+	print_newline();
+
 	for(index = 0; index < 3; index++) //Discarding checksum (first two bytes)
 	{
 		spi_response = spi_transfer( 0xFF );
 	}
 
 	printf("Exiting print block");
+	print_newline();
 
 	// Return
 	return 0;	
 }
+
