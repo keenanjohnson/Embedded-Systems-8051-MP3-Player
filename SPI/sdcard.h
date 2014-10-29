@@ -23,6 +23,9 @@ uint8 initialize_card();
 uint8 send_command( uint8 command, uint32 argument );
 
 // Receives a response from the SD card after sending a command
-uint8 receive_response( uint8 num_bytes, uint8 * response );
+uint8 receive_response( uint8 number_of_bytes, uint8 *response_array );
+
+// Reads a data block of specified size
+uint8 read_block( uint16 number_of_bytes, uint8 *array );
 
 #endif //SDCARD_H
