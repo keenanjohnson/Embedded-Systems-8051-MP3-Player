@@ -611,7 +611,7 @@ uint8 read_sd_block( uint16 number_of_bytes, uint8 *array )
 	print_newline();
 
 	// Receive data bytes
-	for ( index=0; index<(number_of_bytes-1); index++ )
+	for ( index=0; index<(number_of_bytes); index++ )
 	{
 		spi_response = spi_transfer( 0xFF );
 		spi_error_status = (spi_response >> 8);
