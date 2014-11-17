@@ -15,6 +15,7 @@
 #include "Main.h"
 #include "PORT.h"
 #include "uart.h"
+#include "offset_read.h"
 #include "print.h"
 #include "sdcard.h"
 #include "serial_ln.h"
@@ -26,7 +27,7 @@ void main(void)
 	xdata uint8 mem_block[512];
 	uint32 user_input;
 
-	// Access more RAM
+	// Access 1kB of RAM
 	AUXR = 0x0C;
 
 	// Uart at 9600 baud
