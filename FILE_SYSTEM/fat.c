@@ -116,11 +116,15 @@ uint8 mount_drive(void)
 	{
 		// FAT16 unsupported
 		FATTYPE = 2;
+		printf( "FAT16" );
+		print_newline();
 		error_code = 1;
 	}
 	else
 	{
 		// FAT32
+		printf( "FAT32" );
+		print_newline();
 		FATTYPE = 4;
 	}
 
@@ -128,6 +132,14 @@ uint8 mount_drive(void)
 	STARTOFFAT = rsvdSectorCount + relSec;
 	FIRSTDATASECOR = rsvdSectorCount + (numberFATs * fatSize) + ROOTDIRECTORYSECTORS + relSec;
 	FIRSTROOTDIRSEC = rsvdSectorCount + (numberFATs * fatSize) + relSec;
+
+	// Print Globals
+	printf( "Start of FAT: %lu", STARTOFFAT );
+	print_newline();
+	printf( "First Data Sector: %lu", FIRSTDATASECOR );
+	print_newline();
+	printf( "First Root Directory Sector: %lu", FIRSTROOTDIRSEC );
+	print_newline();
 
 	// Return error code
 	return error_code;
