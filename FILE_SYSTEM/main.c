@@ -24,10 +24,6 @@
 
 void main(void)
 {
-	//variables
-	xdata uint8 mem_block[512];
-	uint32 user_input;
-
 	// Access 1kB of RAM
 	AUXR = 0x0C;
 
@@ -44,27 +40,11 @@ void main(void)
 	//Set SPI interface to max speed
 	spi_master_init( 8000000 );
 
+	// Mount Drive
+	mount_drive();
+
 	while(1)
 	{
-		// Get user input
-		printf( "Please enter a block to read:" );
-		print_newline();
-		user_input = long_serial_input();
-
-		// Set chip select low
-		SPI_nCS0 = 0;
-
-		// Send CMD 17
-		send_command( 17 , user_input );
-
-		// Receive data block
-		read_sd_block( 512, mem_block );
-
-		// Set Chip Select High
-		SPI_nCS0 = 1;
-
-		// Print Receive block
-		print_mem_block( mem_block, 512 );
 	}
 }
 

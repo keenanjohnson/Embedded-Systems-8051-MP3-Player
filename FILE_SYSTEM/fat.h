@@ -12,7 +12,11 @@
 #define FAT_H
 
 #include "Main.h"
+#include "offset_read.h"
+#include "PORT.h"
+#include "sdcard.h"
 
+// Initializes the file system
 uint8 mount_drive(void);
 
 #endif // _FAT_H
