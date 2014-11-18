@@ -16,7 +16,6 @@ uint8 mount_drive(void)
 	uint8 error_code = 0;
 	xdata uint8 mem_block[512];
 	uint8 value_8;
-	uint32 value_32;
 	uint16 rsvdSectorCount;
 	uint8 numberFATs;
 	uint16 rootEntryCount;
@@ -25,6 +24,11 @@ uint8 mount_drive(void)
 	uint32 totalSectors32;
 	uint32 fatSize32;
 	uint32 rootCluster;
+	uint32 fatSize;
+	uint32 totalSectors;
+	uint32 dataSec;
+	uint32 countOfClusters;
+	uint32 relSec;
 
 	// Print header
 	print_newline();
@@ -47,13 +51,13 @@ uint8 mount_drive(void)
 	{
 		// This is the MBR
 		// Read the relative sectors value
-		value_32 = read32( 0x01C6, mem_block);
+		relSec = read32( 0x01C6, mem_block);
 		print_newline();
-		printf( "RelSec: %lu", value_32 );
+		printf( "RelSec: %lu", relSec );
 		print_newline();
 	
 		// Load the BPB Sector
-		error_code = load_sector( value_32, mem_block );
+		error_code = load_sector( relSec, mem_block );
 		if ( error_code != 0 )
 		{
 			return error_code;
@@ -87,41 +91,43 @@ uint8 mount_drive(void)
 
 	// Determine the count of sectors occupied by the root directory
 	// Calculate RootDirSectors
-	ROOTDIRECTORYSECTORS = ((RootEntCnt * 32) + (BytesPerSec_g - 1)) / BytesPerSec_g;
+	ROOTDIRECTORYSECTORS = ((rootEntryCount * 32) + (BYTESPERSECTOR - 1)) / BYTESPERSECTOR;
 
-	// Determine FATSz and TotSec
-	FATSz = FATSz16;
-	if(FATSz == 0)
+	// Determine FAT Size and Total Sectors
+	fatSize = fatSize16;
+	if(fatSize == 0)
 	{
-		FATSz = FATSz32;
+		fatSize = fatSize32;
 	}
-	TotSec = TotSec16;
-	if(TotSec == 0)
+	totalSectors = totalSectors16;
+	if(totalSectors == 0)
 	{
-		TotSec = TotSec32;
+		totalSectors = totalSectors32;
 	}
 
 	// Calculate DataSec
-	DataSec = TotSec - (RsvdSecCnt + (NumFATs * FATSz) + RootDirSecs_g);
+	dataSec = totalSectors - (rsvdSectorCount + (numberFATs * fatSize) + ROOTDIRECTORYSECTORS);
 
 	// Calculate CountofClus
-	CountofClus = DataSec / SecPerClus_g;
+	countOfClusters = dataSec / SECTORSPERCLUSTER;
 
 	// Determine FAT type
-	if(CountofClus < 65525)
+	if(countOfClusters < 65525)
 	{
-		FATtype_g = FAT16;
-		error_code = 1; // FAT16 unsupported
+		// FAT16 unsupported
+		FATTYPE = 2;
+		error_code = 1;
 	}
 	else
 	{
-		FATtype_g = FAT32;
+		// FAT32
+		FATTYPE = 4;
 	}
 
-	// Assign globals
-	StartofFAT_g = RsvdSecCnt + RelSec;
-	FirstDataSec_g = RsvdSecCnt + (NumFATs * FATSz) + RootDirSecs_g + RelSec;
-	FirstRootDirSec_g = RsvdSecCnt + (NumFATs * FATSz) + RelSec;
+	// Calculate globals
+	STARTOFFAT = rsvdSectorCount + relSec;
+	FIRSTDATASECOR = rsvdSectorCount + (numberFATs * fatSize) + ROOTDIRECTORYSECTORS + relSec;
+	FIRSTROOTDIRSEC = rsvdSectorCount + (numberFATs * fatSize) + relSec;
 
 	// Return error code
 	return error_code;

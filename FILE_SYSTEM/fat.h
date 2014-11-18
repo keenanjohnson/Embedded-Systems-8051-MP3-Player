@@ -19,7 +19,12 @@
 // Globals
 extern uint16 BYTESPERSECTOR;
 extern uint8 SECTORSPERCLUSTER;
-extern ROOTDIRECTORYSECTORS;
+extern uint32 ROOTDIRECTORYSECTORS;
+extern uint8 SECTORSPERCLUSTER;
+extern uint8 FATTYPE;
+extern uint32 STARTOFFAT;
+extern uint32 FIRSTDATASECOR;
+extern uint32 FIRSTROOTDIRSEC;
 
 // Initializes the file system
 uint8 mount_drive(void);
