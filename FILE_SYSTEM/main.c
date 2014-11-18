@@ -20,6 +20,7 @@
 #include "sdcard.h"
 #include "serial_ln.h"
 #include "spi.h"
+#include "fat.h"
 
 void main(void)
 {
