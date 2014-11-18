@@ -163,3 +163,28 @@ uint32 First_Sector(uint32 clusterNum)
 	// Return
 	return firstSector;	
 }
+ uint32 Find_Next_Clus(uint32 cluster_num, uint8 xdata * array)
+{
+	// Variable declaration
+	uint8 error_code = 0;
+
+	// Calculate the sector number in which the cluster number entry can be found
+
+	// Read the 512 block of the current sector
+	error_code = load_sector( 0, array );
+	if ( error_code != 0 )
+	{
+		printf( "Error loading current sector in Find Next Cluster" );
+		print_newline();
+		return 0;
+	}
+
+	// Calculate the offset address for the cluster number entry
+
+	// Use the read32 (for FAT32) or read16 (for FAT16, if supported) to read the entry
+
+	// If the value is for a FAT32 system, the cluster number only uses 
+	// 28-bits and the upper four bits must be masked off before returning the value
+
+	// If the value is for a FAT16 system, it should be type cast into a uint32 and then returned
+}

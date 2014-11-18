@@ -32,4 +32,7 @@ uint8 mount_drive(void);
 // Calculates the starting sector of a cluster
 uint32 First_Sector(uint32 clusterNum);
 
+// Finds the next cluster in a file given the previous
+uint32 Find_Next_Clus(uint32 cluster_num, uint8 xdata * array);
+
 #endif // _FAT_H
