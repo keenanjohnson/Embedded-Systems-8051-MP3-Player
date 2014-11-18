@@ -7,7 +7,7 @@
 // Franco Santa-Maria
 //
 // CpE 4160
-// Oct. 2014
+// Nov. 2014
 #ifndef FAT_H
 #define FAT_H
 
