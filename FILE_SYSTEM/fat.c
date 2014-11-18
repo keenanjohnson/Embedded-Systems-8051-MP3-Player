@@ -144,3 +144,22 @@ uint8 mount_drive(void)
 	// Return error code
 	return error_code;
 }
+
+uint32 First_Sector(uint32 clusterNum)
+{	
+	// Declare return value
+	uint32 firstSector;
+
+	
+	if( clusterNum == 0 )
+	{
+		firstSector = FIRSTROOTDIRSEC;
+	}
+	else
+	{
+		firstSector = ((clusterNum - 2) * SECTORSPERCLUSTER) + FIRSTDATASECOR;
+	}
+
+	// Return
+	return firstSector;	
+}

@@ -29,4 +29,7 @@ extern uint32 FIRSTROOTDIRSEC;
 // Initializes the file system
 uint8 mount_drive(void);
 
+// Calculates the starting sector of a cluster
+uint32 First_Sector(uint32 clusterNum);
+
 #endif // _FAT_H
