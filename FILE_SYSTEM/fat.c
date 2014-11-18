@@ -7,7 +7,7 @@
 // Franco Santa-Maria
 //
 // CpE 4160
-// Oct. 2014
+// Nov. 2014
 #include "fat.h"
 
 uint8 mount_drive(void)
