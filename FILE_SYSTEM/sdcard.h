@@ -35,5 +35,18 @@ uint8 receive_response( uint8 number_of_bytes, uint8 *response_array );
 // CS should be set external to this function
 uint8 read_sd_block( uint16 number_of_bytes, uint8 *array );
 
+// Reads a 512 byte sector from the SD card
+// 
+// Parameters
+// sector is the sector number of the SD card to read
+// array -> the 512 byte buffer to place the data into
+// 
+// Error Codes
+// 0 -> No error
+// 1 -> Send Command Error
+// 2 -> Receive Response Timeout
+// 3 -> Receive Response SPI Error
+uint8 load_sector( uint32 sector, uint8 *array );
+
 #endif //SDCARD_H
 

@@ -647,3 +647,47 @@ uint8 read_sd_block( uint16 number_of_bytes, uint8 *array )
 	return 0;	
 }
 
+uint8 load_sector( uint32 sector, uint8 *array )
+{
+	// Declare variables
+	uint8 error_code = 0;
+
+	// Set Chip Select Low
+	SPI_nCS0 = 0;
+
+	// Send read command
+	error_code = send_command( 17 , sector );
+
+	// Check error status
+	if ( error_code != 0 )
+	{
+		// Send command error
+		error_code = 1;
+		return  error_code;
+	}
+
+	// Read data response
+	read_sd_block( 512, array );
+
+	// Check error status
+	if ( error_code != 0 )
+	{
+		if ( error_code == 1 )
+		{
+			// Receive timeout error
+			error_code = 2;
+		}
+		else if( error_code == 2 )
+		{
+			// Receive Response SPI Error
+			error_code = 3;
+		}
+	}
+
+	// Set Chip Select High
+	SPI_nCS0 = 1;
+	
+	// Return error code
+	return error_code;
+}
+

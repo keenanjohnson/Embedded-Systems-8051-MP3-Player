@@ -22,8 +22,17 @@
 #include "spi.h"
 #include "fat.h"
 
+////////////////////
+// Global Variables
+////////////////////
+
+
 void main(void)
 {
+	//variables
+	xdata uint8 mem_block[512];
+	uint32 user_input;
+
 	// Access 1kB of RAM
 	AUXR = 0x0C;
 
@@ -45,6 +54,16 @@ void main(void)
 
 	while(1)
 	{
+		// Get user input
+		printf( "Please enter a block to read:" );
+		print_newline();
+		user_input = long_serial_input();
+
+		// Read sector
+		load_sector( user_input, mem_block );
+
+		// Print Receive block
+		print_mem_block( mem_block, 512 );
 	}
 }
 
