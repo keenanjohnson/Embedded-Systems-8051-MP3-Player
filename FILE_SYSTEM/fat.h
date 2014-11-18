@@ -16,6 +16,11 @@
 #include "PORT.h"
 #include "sdcard.h"
 
+// Globals
+extern uint16 BYTESPERSECTOR;
+extern uint8 SECTORSPERCLUSTER;
+extern ROOTDIRECTORYSECTORS;
+
 // Initializes the file system
 uint8 mount_drive(void);
 

@@ -17,6 +17,14 @@ uint8 mount_drive(void)
 	xdata uint8 mem_block[512];
 	uint8 value_8;
 	uint32 value_32;
+	uint16 rsvdSectorCount;
+	uint8 numberFATs;
+	uint16 rootEntryCount;
+	uint16 totalSectors16;
+	uint16 fatSize16;
+	uint32 totalSectors32;
+	uint32 fatSize32;
+	uint32 rootCluster;
 
 	// Print header
 	print_newline();
@@ -64,6 +72,56 @@ uint8 mount_drive(void)
 		print_newline();
 		return error_code;
 	}
+
+	// Read the values from BIOS parameter block
+	BYTESPERSECTOR = read16(0x0B, mem_block);
+	SECTORSPERCLUSTER = read8(0x0D, mem_block);
+	rsvdSectorCount = read16(0x0E, mem_block);
+	numberFATs = read8(0x10, mem_block);
+	rootEntryCount = read16(0x11, mem_block);
+	totalSectors16 = read16(0x13, mem_block);
+	fatSize16 = read16(0x16, mem_block);
+	totalSectors32 = read32(0x20, mem_block);
+	fatSize32 = read32(0x24, mem_block);
+	rootCluster = read32(0x2C, mem_block);
+
+	// Determine the count of sectors occupied by the root directory
+	// Calculate RootDirSectors
+	ROOTDIRECTORYSECTORS = ((RootEntCnt * 32) + (BytesPerSec_g - 1)) / BytesPerSec_g;
+
+	// Determine FATSz and TotSec
+	FATSz = FATSz16;
+	if(FATSz == 0)
+	{
+		FATSz = FATSz32;
+	}
+	TotSec = TotSec16;
+	if(TotSec == 0)
+	{
+		TotSec = TotSec32;
+	}
+
+	// Calculate DataSec
+	DataSec = TotSec - (RsvdSecCnt + (NumFATs * FATSz) + RootDirSecs_g);
+
+	// Calculate CountofClus
+	CountofClus = DataSec / SecPerClus_g;
+
+	// Determine FAT type
+	if(CountofClus < 65525)
+	{
+		FATtype_g = FAT16;
+		error_code = 1; // FAT16 unsupported
+	}
+	else
+	{
+		FATtype_g = FAT32;
+	}
+
+	// Assign globals
+	StartofFAT_g = RsvdSecCnt + RelSec;
+	FirstDataSec_g = RsvdSecCnt + (NumFATs * FATSz) + RootDirSecs_g + RelSec;
+	FirstRootDirSec_g = RsvdSecCnt + (NumFATs * FATSz) + RelSec;
 
 	// Return error code
 	return error_code;

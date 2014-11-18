@@ -25,7 +25,8 @@
 ////////////////////
 // Global Variables
 ////////////////////
-
+uint16 BYTESPERSECTOR;
+uint8 SECTORSPERCLUSTER;
 
 void main(void)
 {
