@@ -189,10 +189,11 @@ uint32 First_Sector(uint32 clusterNum)
 		print_newline();
 		return 0;
 	}
+    
 	current_sector = STARTOFFAT + (offset / BYTESPERSECTOR);
 	
 	// Read the 512 block of the current sector
-	error_code = load_sector( current_sector, 512, array );
+	error_code = load_sector( current_sector, BYTESPERSECTOR, array );
 	if ( error_code != 0 )
 	{
 		printf( "Error loading current sector in Find Next Cluster" );
@@ -207,7 +208,7 @@ uint32 First_Sector(uint32 clusterNum)
 	if (FATTYPE == 4)
 	{
 		value32 = read32(current_offset, array);
-		return value32 & 0x0FFFFFFF;
+		return (value32 & 0x0FFFFFFF);
 	}
 	/**
 	else if (FATTYPE == 2)
