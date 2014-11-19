@@ -15,7 +15,7 @@
 #include "offset_read.h"
 #include "PORT.h"
 #include "sdcard.h"
-#include "Directory_Function.h"
+//#include "Directory_Function.h"
 
 // Globals
 extern uint16 BYTESPERSECTOR;
@@ -26,6 +26,7 @@ extern uint8 FATTYPE;
 extern uint32 STARTOFFAT;
 extern uint32 FIRSTDATASECTOR;
 extern uint32 FIRSTROOTDIRSEC;
+extern uint16 ROOTENTRYCOUNT;
 
 // Initializes the file system
 uint8 mount_drive(void);

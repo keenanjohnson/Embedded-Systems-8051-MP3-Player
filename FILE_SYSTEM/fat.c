@@ -134,8 +134,8 @@ uint8 mount_drive(void)
 
 	// Print Globals
 	printf( "Start of FAT: %lu", STARTOFFAT );
-	print_newline();
-	printf( "First Data Sector: %lu", FIRSTDATASECTOR );
+    print_newline();
+    printf( "First Data Sector: %lu", FIRSTDATASECTOR );
 	print_newline();
 	printf( "First Root Directory Sector: %lu", FIRSTROOTDIRSEC );
 	print_newline();
@@ -217,3 +217,4 @@ uint32 First_Sector(uint32 clusterNum)
 	// If the value is for a FAT32 system, the cluster number only uses 
 	// 28-bits and the upper four bits must be masked off before returning the value
 }
+
