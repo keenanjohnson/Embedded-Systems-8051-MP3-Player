@@ -130,13 +130,13 @@ uint8 mount_drive(void)
 
 	// Calculate globals
 	STARTOFFAT = rsvdSectorCount + relSec;
-	FIRSTDATASECOR = rsvdSectorCount + (numberFATs * fatSize) + ROOTDIRECTORYSECTORS + relSec;
+	FIRSTDATASECTOR = rsvdSectorCount + (numberFATs * fatSize) + ROOTDIRECTORYSECTORS + relSec;
 	FIRSTROOTDIRSEC = rsvdSectorCount + (numberFATs * fatSize) + relSec;
 
 	// Print Globals
 	printf( "Start of FAT: %lu", STARTOFFAT );
 	print_newline();
-	printf( "First Data Sector: %lu", FIRSTDATASECOR );
+	printf( "First Data Sector: %lu", FIRSTDATASECTOR );
 	print_newline();
 	printf( "First Root Directory Sector: %lu", FIRSTROOTDIRSEC );
 	print_newline();
@@ -157,7 +157,7 @@ uint32 First_Sector(uint32 clusterNum)
 	}
 	else
 	{
-		firstSector = ((clusterNum - 2) * SECTORSPERCLUSTER) + FIRSTDATASECOR;
+		firstSector = ((clusterNum - 2) * SECTORSPERCLUSTER) + FIRSTDATASECTOR;
 	}
 
 	// Return
