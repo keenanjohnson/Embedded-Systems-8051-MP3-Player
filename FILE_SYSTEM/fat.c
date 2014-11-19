@@ -47,7 +47,7 @@ uint8 mount_drive(void)
 	// or the 
 	// Master Boot Record
 	value_8 = read8( 0, mem_block);
-	if ( value_8 != 0xEB && value_8 != 0xE9 ) 
+	if ( value_8 != 0xEB && value_8 != 0xE9 )
 	{
 		// This is the MBR
 		// Read the relative sectors value
@@ -167,11 +167,31 @@ uint32 First_Sector(uint32 clusterNum)
 {
 	// Variable declaration
 	uint8 error_code = 0;
-
+	int offset;
+	int current_sector;
+	
 	// Calculate the sector number in which the cluster number entry can be found
-
+	//If FAT32
+	if (FATTYPE == 4)
+	{
+		offset = cluster_num * 4;
+	}
+	//FAT16 unsupported
+	/**else if(FATTYPE == 2)
+	{
+		int offset = cluster_num * 2;
+	}**/
+	else
+	{
+		printf("Error: Unsupported File System");
+		print_newline();
+		return 0;
+	}
+	//Don't get what he means by the value including the RelativeSectors value
+	current_sector = STARTOFFAT + (offset / BYTESPERSECTOR);
+	
 	// Read the 512 block of the current sector
-	error_code = load_sector( 0, array );
+	error_code = load_sector( current_sector, array );
 	if ( error_code != 0 )
 	{
 		printf( "Error loading current sector in Find Next Cluster" );
@@ -180,7 +200,8 @@ uint32 First_Sector(uint32 clusterNum)
 	}
 
 	// Calculate the offset address for the cluster number entry
-
+	
+	
 	// Use the read32 (for FAT32) or read16 (for FAT16, if supported) to read the entry
 
 	// If the value is for a FAT32 system, the cluster number only uses 
