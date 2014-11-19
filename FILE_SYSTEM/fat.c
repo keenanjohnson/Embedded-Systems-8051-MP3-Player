@@ -222,32 +222,33 @@ uint8 Open_File(uint32 Cluster, uint8 xdata *array_in)
 {
     // Variable declaration
     uint8 error_code = 0;
-    uint32 firstCluster;
+    uint32 currentCluster;
 	uint8 userStop = 0;
 	uint8 sectorOffset = 0;
 	uint8 input;
     
     // Get first cluster of file
-    firstCluster =  First_Sector(Cluster);
+    currentCluster =  First_Sector(Cluster);
     
 	// Print file segment and poll user
-	while( error_code == 0 && !userStop)
+	while( ( error_code == 0 ) && ( userStop == 0 ) )
     {
 		// Load sector
-		error_code = load_sector( (firstCluster + sectorOffset), BYTESPERSECTOR, array_in );
+		error_code = load_sector( (currentCluster + sectorOffset), BYTESPERSECTOR, array_in );
 
 		// No error
 		if ( error_code == 0 )
 		{
 			// Print sector
-			print_mem_block( array_in, BYTESPERSECTOR );
+			//print_mem_block( array_in, BYTESPERSECTOR );
 
 			// Prompt user to continue or stop
-			printf("Press Esc to stop, anything else to continue...");
-			print_newline();
+		//	printf("Press Esc to stop, anything else to continue...");
+			//print_newline();
 
 			// Get user value
-			scanf("%c", &input);
+			//scanf("%c", &input);
+			input = 0x50;
 			
 			// Check for escape character
 			if(input == 0x1B)
@@ -267,7 +268,17 @@ uint8 Open_File(uint32 Cluster, uint8 xdata *array_in)
 					sectorOffset = 0;
 
 					// Set cluster to the next cluster
-					firstCluster = Find_Next_Clus(firstCluster, array_in);
+					currentCluster = Find_Next_Clus(currentCluster, array_in);
+
+					// Check for End of File
+					if ( currentCluster  == 0xFFFFFFFF ) 
+					{
+						// End of file detected
+						// Stop the loop
+						userStop = 1;
+						printf( "End of File" );
+						print_newline();
+					}
 				}
 			}
 		}
