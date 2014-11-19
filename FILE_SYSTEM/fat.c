@@ -18,7 +18,6 @@ uint8 mount_drive(void)
 	uint8 value_8;
 	uint16 rsvdSectorCount;
 	uint8 numberFATs;
-	uint16 rootEntryCount;
 	uint16 totalSectors16;
 	uint16 fatSize16;
 	uint32 totalSectors32;
@@ -190,7 +189,6 @@ uint32 First_Sector(uint32 clusterNum)
 		print_newline();
 		return 0;
 	}
-	// Don't get what he means by the value including the RelativeSectors value
 	current_sector = STARTOFFAT + (offset / BYTESPERSECTOR);
 	
 	// Read the 512 block of the current sector
@@ -203,13 +201,13 @@ uint32 First_Sector(uint32 clusterNum)
 	}
 
 	// Calculate the offset address for the cluster number entry
-	// Still don't get what he means by the value including the RelativeSectors value
 	current_offset = offset%BYTESPERSECTOR;
 	
 	// Use the read32 (for FAT32) or read16 (for FAT16, if supported) to read the entry
 	if (FATTYPE == 4)
 	{
 		value32 = read32(current_offset, array);
+		return value32 & 0x0FFFFFFF;
 	}
 	/**
 	else if (FATTYPE == 2)
@@ -218,5 +216,4 @@ uint32 First_Sector(uint32 clusterNum)
 	}**/
 	// If the value is for a FAT32 system, the cluster number only uses 
 	// 28-bits and the upper four bits must be masked off before returning the value
-	return value32 & 0x0FFFFFFF;
 }

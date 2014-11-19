@@ -9,9 +9,9 @@
 #include "print_bytes.h"
 #include "File_System.h"
 
-uint32 idata FirstDataSec_g, StartofFAT_g, FirstRootDirSec_g, RootDirSecs_g;
-uint16 idata BytesPerSec_g;
-uint8 idata SDtype_g, SecPerClus_g, FATtype_g, BytesPerSecShift_g,FATshift_g;
+uint32 idata FIRSTDATASECTOR, STARTOFFAT, FIRSTROOTDIRSEC, ROOTDIRECTORYSECTORS;
+uint16 idata BYTESPERSECTOR;
+uint8 idata SDtype_g, SECTORSPERCLUSTER, FATTYPE, BytesPerSecShift_g,FATshift_g;
 
 
 
@@ -41,18 +41,18 @@ uint16  Print_Directory(uint32 Sector_num, uint8 xdata * array_in)
    values=array_in;
    entries=0;
    i=0;
-   if (Sector_num<FirstDataSec_g)  // included for FAT16 compatibility
+   if (Sector_num<FIRSTDATASECTOR)  // included for FAT16 compatibility
    { 
-      max_sectors=RootDirSecs_g;   // maximum sectors in a FAT16 root directory
+      max_sectors=ROOTDIRECTORYSECTORS;   // maximum sectors in a FAT16 root directory
    }
    else
    {
-      max_sectors=SecPerClus_g;
+      max_sectors=SECTORSPERCLUSTER;
    }
    Sector=Sector_num;
    AMBERLED=0;
    nCS0=0;
-   error_flag=SEND_COMMAND(17,(Sector<<SDtype_g));
+   error_flag=send_command(17,(Sector<<SDtype_g));
    if(error_flag==no_errors) error_flag=read_block(values,512);
    nCS0=1;
    AMBERLED=1;
@@ -106,7 +106,7 @@ uint16  Print_Directory(uint32 Sector_num, uint8 xdata * array_in)
           if((Sector-Sector_num)<max_sectors)
 		  {
               nCS0=0;
-              error_flag=SEND_COMMAND(17,(Sector<<SDtype_g));
+              error_flag=send_command(17,(Sector<<SDtype_g));
               if(error_flag==no_errors) error_flag=read_block(values,512);
 			  if(error_flag!=no_errors)
 			    {
@@ -154,17 +154,17 @@ uint32 Read_Dir_Entry(uint32 Sector_num, uint16 Entry, uint8 xdata * array_in)
    entries=0;
    i=0;
    return_clus=0;
-   if (Sector_num<FirstDataSec_g)  // included for FAT16 compatibility
+   if (Sector_num<FIRSTDATASECTOR)  // included for FAT16 compatibility
    { 
-      max_sectors=RootDirSecs_g;   // maximum sectors in a FAT16 root directory
+      max_sectors=ROOTDIRECTORYSECTORS;   // maximum sectors in a FAT16 root directory
    }
    else
    {
-      max_sectors=SecPerClus_g;
+      max_sectors=SECTORSPERCLUSTER;
    }
    Sector=Sector_num;
    nCS0=0;
-   error_flag=SEND_COMMAND(17,(Sector<<SDtype_g));
+   error_flag=send_command(17,(Sector<<SDtype_g));
    if(error_flag==no_errors)  error_flag=read_block(values,512);
    nCS0=1;
    if(error_flag==no_errors)
@@ -180,7 +180,7 @@ uint32 Read_Dir_Entry(uint32 Sector_num, uint16 Entry, uint8 xdata * array_in)
 		      entries++;
               if(entries==Entry)
               {
-			    if(FATtype_g==FAT32)
+			    if(FATTYPE==FAT32)
                 {
                    return_clus=read8(21+i,values);
 				   return_clus&=0x0F;            // makes sure upper four bits are clear
@@ -205,7 +205,7 @@ uint32 Read_Dir_Entry(uint32 Sector_num, uint16 Entry, uint8 xdata * array_in)
 		   if((Sector-Sector_num)<max_sectors)
 		   {
               nCS0=0;
-              error_flag=SEND_COMMAND(17,(Sector<<SDtype_g));
+              error_flag=send_command(17,(Sector<<SDtype_g));
               if(error_flag==no_errors)  error_flag=read_block(values,512);
               nCS0=1;
 			  if(error_flag!=no_errors)

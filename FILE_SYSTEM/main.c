@@ -31,8 +31,9 @@ uint32 ROOTDIRECTORYSECTORS;
 uint8 SECTORSPERCLUSTER;
 uint8 FATTYPE;
 uint32 STARTOFFAT;
-uint32 FIRSTDATASECOR;
+uint32 FIRSTDATASECTOR;
 uint32 FIRSTROOTDIRSEC;
+uint16 rootEntryCount;
 
 void main(void)
 {
@@ -59,18 +60,25 @@ void main(void)
 	// Mount Drive
 	mount_drive();
 
+	Print_Directory(FIRSTROOTDIRSEC, mem_block);
+	
 	while(1)
 	{
 		// Get user input
-		printf( "Please enter a block to read:" );
+		printf( "Please select an entry to read:" );
 		print_newline();
 		user_input = long_serial_input();
-
-		// Read sector
-		load_sector( user_input, mem_block );
-
-		// Print Receive block
-		print_mem_block( mem_block, 512 );
+		
+		if (user_input > rootEntryCount)
+		{
+			printf( "Invalid Entry" );
+			print_newline();
+		}
+		else
+		{
+			// Print Directory
+			Read_Dir_Entry( , user_input, mem_block);
+		}
 	}
 }
 
