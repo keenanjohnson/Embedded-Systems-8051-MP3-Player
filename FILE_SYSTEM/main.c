@@ -77,6 +77,8 @@ void main(void)
 		print_newline();
 		user_input = long_serial_input();
 		
+		// Check that user input is < number of entries in
+		// the root directory
 		if (user_input > ROOTENTRYCOUNT)
 		{
 			printf( "Invalid Entry" );
@@ -94,7 +96,17 @@ void main(void)
 			}
 			else
 			{
-				
+				// Check if entry is a file or directory
+				if ( entry_type == 0x80 )
+				{
+					// This is a directory 
+					// Find the first sector
+					current_directory = First_Sector(directory_read);
+				}
+				else if ( entry_type == 0x00 )
+				{
+					// This is a file
+				}
 			}
 		}
 	}
