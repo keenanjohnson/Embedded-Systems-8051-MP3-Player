@@ -37,4 +37,7 @@ uint32 First_Sector(uint32 clusterNum);
 // Finds the next cluster in a file given the previous
 uint32 Find_Next_Clus(uint32 cluster_num, uint8 xdata * array);
 
+// Prints a file sector by sector
+uint8 Open_File(uint32 Cluster, uint8 xdata * array_in);
+
 #endif // _FAT_H

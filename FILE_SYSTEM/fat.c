@@ -218,3 +218,19 @@ uint32 First_Sector(uint32 clusterNum)
 	// 28-bits and the upper four bits must be masked off before returning the value
 }
 
+uint8 Open_File(uint32 Cluster, uint8 xdata * array_in)
+{
+    // Variable declaration
+    uint8 error_code = 0;
+    uint32 firstCluster;
+    
+    // Get first cluster of file
+    firstCluster =  First_Sector(Cluster);
+    
+    // Read and print the first sector
+    
+    // Prompt the user to continue or exit
+    
+    return error_code;
+}
+
