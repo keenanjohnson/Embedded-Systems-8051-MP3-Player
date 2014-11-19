@@ -35,7 +35,7 @@ uint8 mount_drive(void)
 	print_newline();
 
 	// Load sector zero
-	error_code = load_sector( 0, mem_block );
+	error_code = load_sector( 0, 512, mem_block );
 	if ( error_code != 0 )
 	{
 		return error_code;
@@ -56,7 +56,7 @@ uint8 mount_drive(void)
 		print_newline();
 	
 		// Load the BPB Sector
-		error_code = load_sector( relSec, mem_block );
+		error_code = load_sector( relSec, 512, mem_block );
 		if ( error_code != 0 )
 		{
 			return error_code;
@@ -192,7 +192,7 @@ uint32 First_Sector(uint32 clusterNum)
 	current_sector = STARTOFFAT + (offset / BYTESPERSECTOR);
 	
 	// Read the 512 block of the current sector
-	error_code = load_sector( current_sector, array );
+	error_code = load_sector( current_sector, 512, array );
 	if ( error_code != 0 )
 	{
 		printf( "Error loading current sector in Find Next Cluster" );
@@ -218,19 +218,68 @@ uint32 First_Sector(uint32 clusterNum)
 	// 28-bits and the upper four bits must be masked off before returning the value
 }
 
-uint8 Open_File(uint32 Cluster, uint8 xdata * array_in)
+uint8 Open_File(uint32 Cluster, uint8 xdata *array_in)
 {
     // Variable declaration
     uint8 error_code = 0;
     uint32 firstCluster;
+	uint8 userStop = 0;
+	uint8 sectorOffset = 0;
+	uint8 input;
     
     // Get first cluster of file
     firstCluster =  First_Sector(Cluster);
     
-    // Read and print the first sector
+	// Print file segment and poll user
+	while( error_code == 0 && !userStop)
+    {
+		// Load sector
+		error_code = load_sector( (firstCluster + sectorOffset), BYTESPERSECTOR, array_in );
+
+		// No error
+		if ( error_code == 0 )
+		{
+			// Print sector
+			print_mem_block( array_in, BYTESPERSECTOR );
+
+			// Prompt user to continue or stop
+			printf("Press Esc to stop, anything else to continue...");
+			print_newline();
+
+			// Get user value
+			scanf("%c", &input);
+			
+			// Check for escape character
+			if(input == 0x1B)
+			{
+				// Escape Key
+				userStop = 1;
+			}
+			else // Not escape key
+			{
+				// Increment offset
+				sectorOffset++;
+
+				// Check for end of cluster
+				if ( sectorOffset == SECTORSPERCLUSTER )
+				{
+					// Set sector offset back to 0
+					sectorOffset = 0;
+
+					// Set cluster to the next cluster
+					firstCluster = Find_Next_Clus(firstCluster, array_in);
+				}
+			}
+		}
+		// Error condition
+		else
+		{
+			printf( "Error loading sector in OpenFile" );
+			print_newline();
+		}
+	}
     
-    // Prompt the user to continue or exit
-    
+	// Return
     return error_code;
 }
 

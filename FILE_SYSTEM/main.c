@@ -42,11 +42,9 @@ void main(void)
 	//variables
 	xdata uint8 mem_block[512];
 	idata uint32 user_input;
-	idata uint32 current_directory = FIRSTROOTDIRSEC;
-	idata uint32 directory_read;
-	
-	//0x80000000 if directory, 1 if file
-	uint8 entry_type;
+	idata uint32 current_directory;
+	idata uint16 num_entries;
+	idata uint32 entry_cluster;
 
 	// Access 1kB of RAM
 	AUXR = 0x0C;
@@ -67,32 +65,34 @@ void main(void)
 	// Mount Drive
 	mount_drive();
 
-	// Print first sector of root directory
-	Print_Directory(FIRSTROOTDIRSEC, mem_block);
-
-	printf("Root Entry Count: %u", ROOTENTRYCOUNT);
-	print_newline();
+	// Set root
+	current_directory = FIRSTROOTDIRSEC;
 	
+	// Super Loop
 	while(1)
 	{
+		// Print directory
+		num_entries = Print_Directory(current_directory, mem_block);
+
 		// Get user input
 		printf( "Please select an entry to read:" );
 		print_newline();
 		user_input = long_serial_input();
 		
 		// Check that user input is < number of entries in
-		// the root directory
-		if (user_input > ROOTENTRYCOUNT)
+		// the current directory
+		if (user_input > num_entries)
 		{
 			printf( "Invalid Entry" );
 			print_newline();
 		}
 		else
 		{
-			// Print Directory
-			directory_read = Read_Dir_Entry(current_directory , user_input, mem_block);
-			entry_type = directory_read & 0x10000000;
-			if ( (directory_read & 0x80000000) == 0x80000000 )
+			// Read current directory
+			entry_cluster = Read_Dir_Entry(current_directory , user_input, mem_block);
+
+			// Check for directory error
+			if ( (entry_cluster & 0x80000000) == 0x80000000 )
 			{
 				printf("Directory_Read: Fatal Read Error");
 				print_newline();
@@ -100,15 +100,17 @@ void main(void)
 			else
 			{
 				// Check if entry is a file or directory
-				if ( entry_type == 0x80 )
+				if ( entry_cluster & 0x10000000 )
 				{
 					// This is a directory 
-					// Find the first sector
-					current_directory = First_Sector(directory_read);
+					// Set current directory to new directory
+					entry_cluster &= 0x0FFFFFFF;
+					current_directory = First_Sector( entry_cluster );
 				}
-				else if ( entry_type == 0x00 )
+				else
 				{
 					// This is a file
+					Open_File(entry_cluster, mem_block);
 				}
 			}
 		}

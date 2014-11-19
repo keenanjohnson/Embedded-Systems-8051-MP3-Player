@@ -42,6 +42,7 @@ uint8 read_sd_block( uint16 number_of_bytes, uint8 *array );
 // 
 // Parameters
 // sector is the sector number of the SD card to read
+// numBytes is the number of bytes to read
 // array -> the 512 byte buffer to place the data into
 // 
 // Error Codes
@@ -49,7 +50,7 @@ uint8 read_sd_block( uint16 number_of_bytes, uint8 *array );
 // 1 -> Send Command Error
 // 2 -> Receive Response Timeout
 // 3 -> Receive Response SPI Error
-uint8 load_sector( uint32 sector, uint8 *array );
+uint8 load_sector( uint32 sector, uint16 numBytes, uint8 *array );
 
 #endif //SDCARD_H
 

@@ -647,7 +647,7 @@ uint8 read_sd_block( uint16 number_of_bytes, uint8 *array )
 	return 0;	
 }
 
-uint8 load_sector( uint32 sector, uint8 *array )
+uint8 load_sector( uint32 sector, uint16 numBytes, uint8 *array )
 {
 	// Declare variables
 	uint8 error_code = 0;
@@ -667,7 +667,7 @@ uint8 load_sector( uint32 sector, uint8 *array )
 	}
 
 	// Read data response
-	read_sd_block( 512, array );
+	read_sd_block( numBytes, array );
 
 	// Check error status
 	if ( error_code != 0 )
