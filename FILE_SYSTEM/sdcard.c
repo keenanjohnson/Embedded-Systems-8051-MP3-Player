@@ -547,10 +547,10 @@ uint8 read_sd_block( uint16 number_of_bytes, uint8 *array )
 	uint16 index;
 
 	// Check for good R1 response
-	printf("Read block");
-	print_newline();
-	printf("Waiting for R1 response...");
-	print_newline();
+	//printf("Read block");
+	//print_newline();
+	//printf("Waiting for R1 response...");
+	//print_newline();
 
 	// Check for SPI error
 	spi_response = receive_response(5 , response);
@@ -607,8 +607,8 @@ uint8 read_sd_block( uint16 number_of_bytes, uint8 *array )
 		return 1;
 	}
 
-	printf("Got the data start token");
-	print_newline();
+    // printf("Got the data start token");
+	// print_newline();
 
 	// Receive data bytes
 	for ( index=0; index<(number_of_bytes); index++ )
@@ -632,16 +632,16 @@ uint8 read_sd_block( uint16 number_of_bytes, uint8 *array )
 	}
 
 	// Discard checksum
-	printf("Received data. Sending three more bytes");
-	print_newline();
+	//printf("Received data. Sending three more bytes");
+	//print_newline();
 
 	for(index = 0; index < 3; index++) //Discarding checksum (first two bytes)
 	{
 		spi_response = spi_transfer( 0xFF );
 	}
 
-	printf("Exiting print block");
-	print_newline();
+	//printf("Exiting print block");
+	//print_newline();
 
 	// Return
 	return 0;	

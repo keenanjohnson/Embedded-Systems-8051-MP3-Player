@@ -69,6 +69,9 @@ void main(void)
 
 	// Print first sector of root directory
 	Print_Directory(FIRSTROOTDIRSEC, mem_block);
+
+	printf("Root Entry Count: %u", ROOTENTRYCOUNT);
+	print_newline();
 	
 	while(1)
 	{
