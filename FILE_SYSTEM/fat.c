@@ -167,27 +167,30 @@ uint32 First_Sector(uint32 clusterNum)
 {
 	// Variable declaration
 	uint8 error_code = 0;
-	int offset;
-	int current_sector;
+	uint32 offset;
+	uint32 current_sector;
+	uint32 current_offset;
+	uint32 value32;
+	//uint16 value16;
 	
 	// Calculate the sector number in which the cluster number entry can be found
-	//If FAT32
+	// If FAT32
 	if (FATTYPE == 4)
 	{
 		offset = cluster_num * 4;
 	}
-	//FAT16 unsupported
+	// FAT16 unsupported
 	/**else if(FATTYPE == 2)
 	{
 		int offset = cluster_num * 2;
 	}**/
 	else
 	{
-		printf("Error: Unsupported File System");
+		printf("Error - Find_Next_Clus: Unsupported File System");
 		print_newline();
 		return 0;
 	}
-	//Don't get what he means by the value including the RelativeSectors value
+	// Don't get what he means by the value including the RelativeSectors value
 	current_sector = STARTOFFAT + (offset / BYTESPERSECTOR);
 	
 	// Read the 512 block of the current sector
@@ -200,12 +203,20 @@ uint32 First_Sector(uint32 clusterNum)
 	}
 
 	// Calculate the offset address for the cluster number entry
-	
+	// Still don't get what he means by the value including the RelativeSectors value
+	current_offset = offset%BYTESPERSECTOR;
 	
 	// Use the read32 (for FAT32) or read16 (for FAT16, if supported) to read the entry
-
+	if (FATTYPE == 4)
+	{
+		value32 = read32(current_offset, array);
+	}
+	/**
+	else if (FATTYPE == 2)
+	{
+		value16 = read16(current_offset, array);
+	}**/
 	// If the value is for a FAT32 system, the cluster number only uses 
 	// 28-bits and the upper four bits must be masked off before returning the value
-
-	// If the value is for a FAT16 system, it should be type cast into a uint32 and then returned
+	return value32 & 0x0FFFFFFF;
 }
