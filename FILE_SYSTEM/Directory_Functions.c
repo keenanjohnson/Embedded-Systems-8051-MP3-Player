@@ -38,7 +38,7 @@ uint16  Print_Directory(uint32 Sector_num, uint8 xdata * array_in)
    AMBERLED=0;
    SPI_nCS0=0;
    error_flag=send_command(17,(Sector<<SDTYPE));
-   if(error_flag==0) error_flag=read_sd_block(values,512);
+   if(error_flag==0) error_flag=read_sd_block(512,values);
    SPI_nCS0=1;
    AMBERLED=1;
    if(error_flag==0)
@@ -92,7 +92,7 @@ uint16  Print_Directory(uint32 Sector_num, uint8 xdata * array_in)
 		  {
               SPI_nCS0=0;
               error_flag=send_command(17,(Sector<<SDTYPE));
-              if(error_flag==0) error_flag=read_sd_block(values,512);
+              if(error_flag==0) error_flag=read_sd_block(512,values);
 			  if(error_flag!=0)
 			    {
 			      entries=0;   // no entries found indicates disk read error
@@ -150,7 +150,7 @@ uint32 Read_Dir_Entry(uint32 Sector_num, uint16 Entry, uint8 xdata * array_in)
    Sector=Sector_num;
    SPI_nCS0=0;
    error_flag=send_command(17,(Sector<<SDTYPE));
-   if(error_flag==0)  error_flag=read_sd_block(values,512);
+   if(error_flag==0)  error_flag=read_sd_block(512, values);
    SPI_nCS0=1;
    if(error_flag==0)
    {
@@ -191,7 +191,7 @@ uint32 Read_Dir_Entry(uint32 Sector_num, uint16 Entry, uint8 xdata * array_in)
 		   {
               SPI_nCS0=0;
               error_flag=send_command(17,(Sector<<SDTYPE));
-              if(error_flag==0)  error_flag=read_sd_block(values,512);
+              if(error_flag==0)  error_flag=read_sd_block(512, values);
               SPI_nCS0=1;
 			  if(error_flag!=0)
 			  {
