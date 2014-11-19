@@ -9,18 +9,6 @@
 #include "print_bytes.h"
 #include "File_System.h"
 
-uint32 idata FIRSTDATASECTOR, STARTOFFAT, FIRSTROOTDIRSEC, ROOTDIRECTORYSECTORS;
-uint16 idata BYTESPERSECTOR;
-uint8 idata SDtype_g, SECTORSPERCLUSTER, FATTYPE, BytesPerSecShift_g,FATshift_g;
-
-
-
-
-
-
-
-
-
 /***********************************************************************
 DESC: Prints all short file name entries for a given directory 
 INPUT: Starting Sector of the directory and the pointer to a 
@@ -52,7 +40,7 @@ uint16  Print_Directory(uint32 Sector_num, uint8 xdata * array_in)
    Sector=Sector_num;
    AMBERLED=0;
    nCS0=0;
-   error_flag=send_command(17,(Sector<<SDtype_g));
+   error_flag=send_command(17,(Sector<<SDTYPE));
    if(error_flag==no_errors) error_flag=read_block(values,512);
    nCS0=1;
    AMBERLED=1;
@@ -106,7 +94,7 @@ uint16  Print_Directory(uint32 Sector_num, uint8 xdata * array_in)
           if((Sector-Sector_num)<max_sectors)
 		  {
               nCS0=0;
-              error_flag=send_command(17,(Sector<<SDtype_g));
+              error_flag=send_command(17,(Sector<<SDTYPE));
               if(error_flag==no_errors) error_flag=read_block(values,512);
 			  if(error_flag!=no_errors)
 			    {
@@ -164,7 +152,7 @@ uint32 Read_Dir_Entry(uint32 Sector_num, uint16 Entry, uint8 xdata * array_in)
    }
    Sector=Sector_num;
    nCS0=0;
-   error_flag=send_command(17,(Sector<<SDtype_g));
+   error_flag=send_command(17,(Sector<<SDTYPE));
    if(error_flag==no_errors)  error_flag=read_block(values,512);
    nCS0=1;
    if(error_flag==no_errors)
@@ -205,7 +193,7 @@ uint32 Read_Dir_Entry(uint32 Sector_num, uint16 Entry, uint8 xdata * array_in)
 		   if((Sector-Sector_num)<max_sectors)
 		   {
               nCS0=0;
-              error_flag=send_command(17,(Sector<<SDtype_g));
+              error_flag=send_command(17,(Sector<<SDTYPE));
               if(error_flag==no_errors)  error_flag=read_block(values,512);
               nCS0=1;
 			  if(error_flag!=no_errors)
