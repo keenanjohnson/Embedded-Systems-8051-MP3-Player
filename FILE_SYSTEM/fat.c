@@ -173,23 +173,10 @@ uint32 First_Sector(uint32 clusterNum)
 	//uint16 value16;
 	
 	// Calculate the sector number in which the cluster number entry can be found
-	// If FAT32
-	if (FATTYPE == 4)
-	{
-		offset = cluster_num * 4;
-	}
-	// FAT16 unsupported
-	/**else if(FATTYPE == 2)
-	{
-		int offset = cluster_num * 2;
-	}**/
-	else
-	{
-		printf("Error - Find_Next_Clus: Unsupported File System");
-		print_newline();
-		return 0;
-	}
+	offset = cluster_num * 4;
 	current_sector = STARTOFFAT + (offset / BYTESPERSECTOR);
+	printf("Current Sector = %lu",current_sector);
+	print_newline();
 	
 	// Read the 512 block of the current sector
 	error_code = load_sector( current_sector, 512, array );
@@ -202,20 +189,10 @@ uint32 First_Sector(uint32 clusterNum)
 
 	// Calculate the offset address for the cluster number entry
 	current_offset = offset%BYTESPERSECTOR;
-	
-	// Use the read32 (for FAT32) or read16 (for FAT16, if supported) to read the entry
-	if (FATTYPE == 4)
-	{
-		value32 = read32(current_offset, array);
-		return value32 & 0x0FFFFFFF;
-	}
-	/**
-	else if (FATTYPE == 2)
-	{
-		value16 = read16(current_offset, array);
-	}**/
-	// If the value is for a FAT32 system, the cluster number only uses 
-	// 28-bits and the upper four bits must be masked off before returning the value
+	printf("Current Offset = %lu",current_offset);
+	print_newline();
+	value32 = read32(current_offset, array);
+	return value32 & 0x0FFFFFFF;
 }
 
 uint8 Open_File(uint32 Cluster, uint8 xdata *array_in)
@@ -243,7 +220,7 @@ uint8 Open_File(uint32 Cluster, uint8 xdata *array_in)
 			//print_mem_block( array_in, BYTESPERSECTOR );
 
 			// Prompt user to continue or stop
-		//	printf("Press Esc to stop, anything else to continue...");
+			//printf("Press Esc to stop, anything else to continue...");
 			//print_newline();
 
 			// Get user value
@@ -262,14 +239,19 @@ uint8 Open_File(uint32 Cluster, uint8 xdata *array_in)
 				sectorOffset++;
 
 				// Check for end of cluster
-				if ( sectorOffset == SECTORSPERCLUSTER )
+				if ( sectorOffset == (SECTORSPERCLUSTER-1) )
 				{
 					// Set sector offset back to 0
 					sectorOffset = 0;
 
 					// Set cluster to the next cluster
 					currentCluster = Find_Next_Clus(currentCluster, array_in);
-
+					
+					printf("Sector Cluster End Reached. Press Any key to continue.");
+					printf("Current Cluster: %lu",currentCluster);
+					print_newline();
+					scanf("%c", &input);
+					
 					// Check for End of File
 					if ( currentCluster  == 0xFFFFFFFF ) 
 					{
