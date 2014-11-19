@@ -81,7 +81,7 @@ uint8 mount_drive(void)
 	SECTORSPERCLUSTER = read8(0x0D, mem_block);
 	rsvdSectorCount = read16(0x0E, mem_block);
 	numberFATs = read8(0x10, mem_block);
-	rootEntryCount = read16(0x11, mem_block);
+	ROOTENTRYCOUNT = read16(0x11, mem_block);
 	totalSectors16 = read16(0x13, mem_block);
 	fatSize16 = read16(0x16, mem_block);
 	totalSectors32 = read32(0x20, mem_block);
@@ -90,7 +90,7 @@ uint8 mount_drive(void)
 
 	// Determine the count of sectors occupied by the root directory
 	// Calculate RootDirSectors
-	ROOTDIRECTORYSECTORS = ((rootEntryCount * 32) + (BYTESPERSECTOR - 1)) / BYTESPERSECTOR;
+	ROOTDIRECTORYSECTORS = ((ROOTENTRYCOUNT * 32) + (BYTESPERSECTOR - 1)) / BYTESPERSECTOR;
 
 	// Determine FAT Size and Total Sectors
 	fatSize = fatSize16;
