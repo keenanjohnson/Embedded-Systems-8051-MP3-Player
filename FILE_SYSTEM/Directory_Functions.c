@@ -16,9 +16,6 @@ block of memory in xdata that can be used to read blocks from the SD card
 RETURNS: Uint16 number of entries found in the directory
 CAUTION: Supports FAT16, SD_shift must be set before using this function
 ************************************************************************/
-
-
-
 uint16  Print_Directory(uint32 Sector_num, uint8 xdata * array_in)
 { 
    uint32 Sector, max_sectors;

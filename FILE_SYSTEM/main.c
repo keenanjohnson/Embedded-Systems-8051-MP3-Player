@@ -67,6 +67,7 @@ void main(void)
 	// Mount Drive
 	mount_drive();
 
+	// Print first sector of root directory
 	Print_Directory(FIRSTROOTDIRSEC, mem_block);
 	
 	while(1)
