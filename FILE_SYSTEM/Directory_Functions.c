@@ -39,10 +39,10 @@ uint16  Print_Directory(uint32 Sector_num, uint8 xdata * array_in)
    }
    Sector=Sector_num;
    AMBERLED=0;
-   nCS0=0;
+   SPI_nCS0=0;
    error_flag=send_command(17,(Sector<<SDTYPE));
-   if(error_flag==no_errors) error_flag=read_sd_bkicj(values,512);
-   nCS0=1;
+   if(error_flag==no_errors) error_flag=read_sd_block(values,512);
+   SPI_nCS0=1;
    AMBERLED=1;
    if(error_flag==no_errors)
    {
@@ -93,15 +93,15 @@ uint16  Print_Directory(uint32 Sector_num, uint8 xdata * array_in)
 		  Sector++;
           if((Sector-Sector_num)<max_sectors)
 		  {
-              nCS0=0;
+              SPI_nCS0=0;
               error_flag=send_command(17,(Sector<<SDTYPE));
-              if(error_flag==no_errors) error_flag=read_sd_bkicj(values,512);
+              if(error_flag==no_errors) error_flag=read_sd_block(values,512);
 			  if(error_flag!=no_errors)
 			    {
 			      entries=0;   // no entries found indicates disk read error
 				  temp8=0;     // forces a function exit
 			    }
-                nCS0=1;
+                SPI_nCS0=1;
 			    i=0;
 		  }
 		  else
@@ -151,10 +151,10 @@ uint32 Read_Dir_Entry(uint32 Sector_num, uint16 Entry, uint8 xdata * array_in)
       max_sectors=SECTORSPERCLUSTER;
    }
    Sector=Sector_num;
-   nCS0=0;
+   SPI_nCS0=0;
    error_flag=send_command(17,(Sector<<SDTYPE));
-   if(error_flag==no_errors)  error_flag=read_sd_bkicj(values,512);
-   nCS0=1;
+   if(error_flag==no_errors)  error_flag=read_sd_block(values,512);
+   SPI_nCS0=1;
    if(error_flag==no_errors)
    {
      do
@@ -192,11 +192,11 @@ uint32 Read_Dir_Entry(uint32 Sector_num, uint16 Entry, uint8 xdata * array_in)
 		   Sector++;
 		   if((Sector-Sector_num)<max_sectors)
 		   {
-              nCS0=0;
+              SPI_nCS0=0;
               error_flag=send_command(17,(Sector<<SDTYPE));
-              if(error_flag==no_errors)  error_flag=read_sd_bkicj(values,512);
-              nCS0=1;
-			  if(error_flag!=no_errors)
+              if(error_flag==0)  error_flag=read_sd_block(values,512);
+              SPI_nCS0=1;
+			  if(error_flag!=0)
 			  {
 			     return_clus=no_entry_found;
                  temp8=0; 

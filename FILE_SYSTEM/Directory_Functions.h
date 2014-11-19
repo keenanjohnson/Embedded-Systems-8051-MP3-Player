@@ -1,7 +1,7 @@
 #ifndef _Directory_Func_H
 #define _Directory_Func_H
 
-#include "Main.H"
+#include "Main.h"
 
 //------- Public Constants  -----------------------------------------
 #define FAT32 (4)
