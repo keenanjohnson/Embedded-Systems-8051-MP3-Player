@@ -34,7 +34,7 @@ uint8 FATTYPE;
 uint32 STARTOFFAT;
 uint32 FIRSTDATASECTOR;
 uint32 FIRSTROOTDIRSEC;
-uint16 rootEntryCount;
+uint16 ROOTENTRYCOUNT;
 uint8 SDTYPE = 0;
 
 void main(void)
@@ -77,7 +77,7 @@ void main(void)
 		print_newline();
 		user_input = long_serial_input();
 		
-		if (user_input > rootEntryCount)
+		if (user_input > ROOTENTRYCOUNT)
 		{
 			printf( "Invalid Entry" );
 			print_newline();
