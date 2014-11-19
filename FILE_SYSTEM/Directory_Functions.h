@@ -14,7 +14,7 @@
 #define no_entry_found (0x80000000)  // msb set to indicate error
 #define directory_bit  (0x10000000)  // lsb of first nibble (bit28)
 
-extern uint8 SDTYPE;
+extern idata uint8 SDTYPE;
 
 // ------ Public function prototypes -------------------------------
 uint16 Print_Directory(uint32 Sector_num, uint8 xdata * array_in);

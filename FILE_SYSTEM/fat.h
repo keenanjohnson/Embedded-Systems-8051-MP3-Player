@@ -18,15 +18,15 @@
 //#include "Directory_Function.h"
 
 // Globals
-extern uint16 BYTESPERSECTOR;
-extern uint8 SECTORSPERCLUSTER;
-extern uint32 ROOTDIRECTORYSECTORS;
-extern uint8 SECTORSPERCLUSTER;
-extern uint8 FATTYPE;
-extern uint32 STARTOFFAT;
-extern uint32 FIRSTDATASECTOR;
-extern uint32 FIRSTROOTDIRSEC;
-extern uint16 ROOTENTRYCOUNT;
+extern idata uint16 BYTESPERSECTOR;
+extern idata uint8 SECTORSPERCLUSTER;
+extern idata uint32 ROOTDIRECTORYSECTORS;
+extern idata uint8 SECTORSPERCLUSTER;
+extern idata uint8 FATTYPE;
+extern idata uint32 STARTOFFAT;
+extern idata uint32 FIRSTDATASECTOR;
+extern idata uint32 FIRSTROOTDIRSEC;
+extern idata uint16 ROOTENTRYCOUNT;
 
 // Initializes the file system
 uint8 mount_drive(void);

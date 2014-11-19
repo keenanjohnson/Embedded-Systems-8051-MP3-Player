@@ -33,8 +33,8 @@ void print_line( uint8 *first_byte )
 
 void print_mem_block( uint8 *start_addr, uint16 num_bytes )
 {
-   uint8 * input;
-   uint16 i;
+   idata uint8 * input;
+   idata uint16 i;
    input = start_addr;
    i = (uint16) input;
    i &= 0x000f;

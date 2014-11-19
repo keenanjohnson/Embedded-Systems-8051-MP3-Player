@@ -13,21 +13,21 @@
 uint8 mount_drive(void)
 {
 	// Variable declaration
-	uint8 error_code = 0;
+	idata uint8 error_code = 0;
 	xdata uint8 mem_block[512];
-	uint8 value_8;
-	uint16 rsvdSectorCount;
-	uint8 numberFATs;
-	uint16 totalSectors16;
-	uint16 fatSize16;
-	uint32 totalSectors32;
-	uint32 fatSize32;
-	uint32 rootCluster;
-	uint32 fatSize;
-	uint32 totalSectors;
-	uint32 dataSec;
-	uint32 countOfClusters;
-	uint32 relSec;
+	idata uint8 value_8;
+	idata uint16 rsvdSectorCount;
+	idata uint8 numberFATs;
+	idata uint16 totalSectors16;
+	idata uint16 fatSize16;
+	idata uint32 totalSectors32;
+	idata uint32 fatSize32;
+	idata uint32 rootCluster;
+	idata uint32 fatSize;
+	idata uint32 totalSectors;
+	idata uint32 dataSec;
+	idata uint32 countOfClusters;
+	idata uint32 relSec;
 
 	// Print header
 	print_newline();

@@ -26,24 +26,24 @@
 ////////////////////
 // Global Variables
 ////////////////////
-uint16 BYTESPERSECTOR;
-uint8 SECTORSPERCLUSTER;
-uint32 ROOTDIRECTORYSECTORS;
-uint8 SECTORSPERCLUSTER;
-uint8 FATTYPE;
-uint32 STARTOFFAT;
-uint32 FIRSTDATASECTOR;
-uint32 FIRSTROOTDIRSEC;
-uint16 ROOTENTRYCOUNT;
-uint8 SDTYPE = 0;
+idata uint16 BYTESPERSECTOR;
+idata uint8 SECTORSPERCLUSTER;
+idata uint32 ROOTDIRECTORYSECTORS;
+idata uint8 SECTORSPERCLUSTER;
+idata uint8 FATTYPE;
+idata uint32 STARTOFFAT;
+idata uint32 FIRSTDATASECTOR;
+idata uint32 FIRSTROOTDIRSEC;
+idata uint16 ROOTENTRYCOUNT;
+idata uint8 SDTYPE = 0;
 
 void main(void)
 {
 	//variables
 	xdata uint8 mem_block[512];
-	uint32 user_input;
-	uint32 current_directory = FIRSTROOTDIRSEC;
-	uint32 directory_read;
+	idata uint32 user_input;
+	idata uint32 current_directory = FIRSTROOTDIRSEC;
+	idata uint32 directory_read;
 	
 	//0x80000000 if directory, 1 if file
 	uint8 entry_type;
