@@ -21,6 +21,9 @@
 uint8 initialize_card();
 
 // Sends a command to the SD card
+//
+// 0 return indicates no error
+// 1 indicates an error
 uint8 send_command( uint8 command, uint32 argument );
 
 // Receives a response from the SD card after sending a command
