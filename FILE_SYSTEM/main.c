@@ -42,6 +42,10 @@ void main(void)
 	//variables
 	xdata uint8 mem_block[512];
 	uint32 user_input;
+	uint32 current_directory = FIRSTROOTDIRSEC;
+	uint32 directory_read;
+	//0x80000000 if directory, 1 if file
+	uint8 entry_type;
 
 	// Access 1kB of RAM
 	AUXR = 0x0C;
@@ -79,7 +83,17 @@ void main(void)
 		else
 		{
 			// Print Directory
-			Read_Dir_Entry( , user_input, mem_block);
+			directory_read = Read_Dir_Entry(current_directory , user_input, mem_block);
+			entry_type = directory_read & 0x10000000
+			if (directory_read & 0x80000000 == 0x80000000)
+			{
+				printf("Directory_Read: Fatal Read Error");
+				print_newline();
+			}
+			else
+			{
+				
+			}
 		}
 	}
 }

@@ -1,13 +1,13 @@
 #include "AT89C51RC2.h"
 #include <stdio.h>
-#include "main.h"
+#include "Main.h"
 #include "PORT.H"
-#include "UART.h"
-#include "SPI.h"
-#include "SDCard.h"
+#include "uart.h"
+#include "spi.h"
+#include "sdcard.h"
 #include "Directory_Functions.h"
-#include "print_bytes.h"
-#include "File_System.h"
+#include "print.h"
+#include "fat.h"
 
 /***********************************************************************
 DESC: Prints all short file name entries for a given directory 
@@ -41,7 +41,7 @@ uint16  Print_Directory(uint32 Sector_num, uint8 xdata * array_in)
    AMBERLED=0;
    nCS0=0;
    error_flag=send_command(17,(Sector<<SDTYPE));
-   if(error_flag==no_errors) error_flag=read_block(values,512);
+   if(error_flag==no_errors) error_flag=read_sd_bkicj(values,512);
    nCS0=1;
    AMBERLED=1;
    if(error_flag==no_errors)
@@ -95,7 +95,7 @@ uint16  Print_Directory(uint32 Sector_num, uint8 xdata * array_in)
 		  {
               nCS0=0;
               error_flag=send_command(17,(Sector<<SDTYPE));
-              if(error_flag==no_errors) error_flag=read_block(values,512);
+              if(error_flag==no_errors) error_flag=read_sd_bkicj(values,512);
 			  if(error_flag!=no_errors)
 			    {
 			      entries=0;   // no entries found indicates disk read error
@@ -132,7 +132,7 @@ CAUTION:
 ************************************************************************/
 
 uint32 Read_Dir_Entry(uint32 Sector_num, uint16 Entry, uint8 xdata * array_in)
-{ 
+{
    uint32 Sector, max_sectors, return_clus;
    uint16 i, entries;
    uint8 temp8, attr, error_flag;
@@ -153,7 +153,7 @@ uint32 Read_Dir_Entry(uint32 Sector_num, uint16 Entry, uint8 xdata * array_in)
    Sector=Sector_num;
    nCS0=0;
    error_flag=send_command(17,(Sector<<SDTYPE));
-   if(error_flag==no_errors)  error_flag=read_block(values,512);
+   if(error_flag==no_errors)  error_flag=read_sd_bkicj(values,512);
    nCS0=1;
    if(error_flag==no_errors)
    {
@@ -194,7 +194,7 @@ uint32 Read_Dir_Entry(uint32 Sector_num, uint16 Entry, uint8 xdata * array_in)
 		   {
               nCS0=0;
               error_flag=send_command(17,(Sector<<SDTYPE));
-              if(error_flag==no_errors)  error_flag=read_block(values,512);
+              if(error_flag==no_errors)  error_flag=read_sd_bkicj(values,512);
               nCS0=1;
 			  if(error_flag!=no_errors)
 			  {
