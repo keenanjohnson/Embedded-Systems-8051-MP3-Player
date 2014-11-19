@@ -44,6 +44,7 @@ void main(void)
 	uint32 user_input;
 	uint32 current_directory = FIRSTROOTDIRSEC;
 	uint32 directory_read;
+	
 	//0x80000000 if directory, 1 if file
 	uint8 entry_type;
 
@@ -84,8 +85,8 @@ void main(void)
 		{
 			// Print Directory
 			directory_read = Read_Dir_Entry(current_directory , user_input, mem_block);
-			entry_type = directory_read & 0x10000000
-			if (directory_read & 0x80000000 == 0x80000000)
+			entry_type = directory_read & 0x10000000;
+			if ( (directory_read & 0x80000000) == 0x80000000 )
 			{
 				printf("Directory_Read: Fatal Read Error");
 				print_newline();
