@@ -21,6 +21,7 @@
 #include "serial_ln.h"
 #include "spi.h"
 #include "fat.h"
+#include "Directory_Functions.h"
 
 ////////////////////
 // Global Variables
@@ -34,6 +35,7 @@ uint32 STARTOFFAT;
 uint32 FIRSTDATASECTOR;
 uint32 FIRSTROOTDIRSEC;
 uint16 rootEntryCount;
+uint8 SDTYPE = 0;
 
 void main(void)
 {
