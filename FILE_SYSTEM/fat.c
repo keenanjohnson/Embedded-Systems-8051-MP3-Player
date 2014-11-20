@@ -174,12 +174,13 @@ uint32 First_Sector(uint32 clusterNum)
 	
 	// Calculate the sector number in which the cluster number entry can be found
 	offset = cluster_num * 4;
+
 	current_sector = STARTOFFAT + (offset / BYTESPERSECTOR);
 	printf("Current Sector = %lu",current_sector);
 	print_newline();
 	
 	// Read the 512 block of the current sector
-	error_code = load_sector( current_sector, 512, array );
+	error_code = load_sector( current_sector, BYTESPERSECTOR, array );
 	if ( error_code != 0 )
 	{
 		printf( "Error loading current sector in Find Next Cluster" );
