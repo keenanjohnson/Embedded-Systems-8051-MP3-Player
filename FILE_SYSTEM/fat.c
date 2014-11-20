@@ -192,8 +192,14 @@ uint32 First_Sector(uint32 clusterNum)
 	current_offset = offset%BYTESPERSECTOR;
 	printf("Current Offset = %lu",current_offset);
 	print_newline();
+
+	// Read the next cluster value
 	value32 = read32(current_offset, array);
-	return value32 & 0x0FFFFFFF;
+	printf("Next Cluster32 Number = %lu", value32);
+	print_newline();
+
+	// Return
+	return ( value32 & 0x0FFFFFFF );
 }
 
 uint8 Open_File(uint32 Cluster, uint8 xdata *array_in)
@@ -207,6 +213,9 @@ uint8 Open_File(uint32 Cluster, uint8 xdata *array_in)
     
     // Get first cluster of file
     currentCluster =  First_Sector(Cluster);
+
+	printf("First Sector: %lu", currentCluster);
+	print_newline();
     
 	// Print file segment and poll user
 	while( ( error_code == 0 ) && ( userStop == 0 ) )
@@ -249,6 +258,7 @@ uint8 Open_File(uint32 Cluster, uint8 xdata *array_in)
 					currentCluster = Find_Next_Clus(currentCluster, array_in);
 					
 					printf("Sector Cluster End Reached. Press Any key to continue.");
+					print_newline();
 					printf("Current Cluster: %lu",currentCluster);
 					print_newline();
 					scanf("%c", &input);

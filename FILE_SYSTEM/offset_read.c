@@ -46,13 +46,13 @@ uint16 read16(uint16 offset, uint8 *array_name)
 		for( i=0; i<2; i++ )
 		{
 			// Read each byte starting with MSB
-			byte = *( array_name + offset + (1-i) );
+			byte = array_name[offset + (1-i)];
 	
 			// Shift return value left 8 bits
 			value = value << 8;
 	
 			// OR byte with shifted return value
-			value = value | byte;
+			value = value | ((uint16)byte);
 		}
 	}
 	else // Offset > 511
@@ -79,13 +79,13 @@ uint32 read32(uint16 offset, uint8 *array_name)
 		for( i=0; i<4; i++ )
 		{
 			// Read each byte starting with MSB
-			byte = *( array_name + offset + (3-i) );
+			byte = array_name[offset + (3-i)];
 	
 			// Shift return value left 8 bits
 			value = value << 8;
 	
 			// OR byte with shifted return value
-			value = value | byte;
+			value = value | ((uint32)byte);
 		}
 	}
 	else // Offset > 511
