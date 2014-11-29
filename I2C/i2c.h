@@ -26,6 +26,7 @@
 // Error codes
 // 0 -> No Error
 // 1 -> Bus Busy Error
+// 2 -> Device NACK Error
 uint8 I2C_Write(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name);
 
 // Reads data from the I2C bus
