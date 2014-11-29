@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 
+#include "i2c.h"
 #include "Main.h"
 #include "PORT.h"
 #include "uart.h"
