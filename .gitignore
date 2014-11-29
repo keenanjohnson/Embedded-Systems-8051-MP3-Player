@@ -10,4 +10,5 @@
 lcd
 uart
 spi
+i2c
 FILE_SYSTEM
