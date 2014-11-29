@@ -27,6 +27,10 @@ uint8 I2C_Write(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 		return error_status;
 	}
 
+	// Delay and set SCL to 0
+	delay( ClockDelay );
+	SCL = 0;
+
 	// Return error status
 	return error_status;
 }
