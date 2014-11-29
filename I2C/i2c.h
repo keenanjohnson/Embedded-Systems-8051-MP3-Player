@@ -21,6 +21,10 @@
 
 // Sends data out on the I2C bus
 //
+// device_addr -> the first byte sent
+// number_of_bytes -> number of bytes in array_name
+// array_name -> the array containing the data bytes 
+//
 // Returns an error code
 //
 // Error codes
