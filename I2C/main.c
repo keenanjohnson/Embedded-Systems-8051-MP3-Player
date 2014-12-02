@@ -38,7 +38,7 @@ void main(void)
 	uart_init();
 
 	// Set I2C Frequency
-	set_frequency( 100 );
+	set_frequency( 100000 );
 
 	while(1)
 	{
