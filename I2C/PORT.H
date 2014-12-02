@@ -24,8 +24,8 @@ sbit DB6 = P0^6;
 sbit DB7 = P0^7;
 
 // Port 1
-sbit SCL = P1^0;
-sbit SDA = P1^1;
+sbit DRST = P1^0;
+//sbit P1_1 = P1^1;
 //sbit P1_2 = P1^2;
 //sbit P1_3 = P1^3;
 sbit SPI_nCS0 = P1^4;
@@ -48,8 +48,8 @@ sbit TxD_pin = P3^0;
 sbit RxD_pin = P3^1;
 //sbit P3_2 = P3^2;
 //sbit P3_3 = P3^3;
-//sbit P3_4 = P3^4;
-//sbit P3_5 = P3^5;
+sbit SCL = P3^4;
+sbit SDA = P3^5;
 sbit RS = P3^6;
 sbit E = P3^7;
 
