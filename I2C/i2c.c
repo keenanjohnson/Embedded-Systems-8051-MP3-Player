@@ -193,8 +193,95 @@ uint8 I2C_Write(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 uint8 I2C_Read(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 {
 	// Variable declaration
+	// Bus Busy = 1
+	// Slave timeout = 2
+	// Improper ACK = 3
 	uint8 error_status = 0;
-
+	uint8 timeout = 0;
+	bit address_bit = 0;
+	
+	//Setting initial states and verifying
+	SCL = 1;
+	SDA = 1;
+	if (SCL != 1 || SDA != 1)
+	{
+		error_status = 1;
+		return error_status;
+	}
+	
+	//Send the 7-bit device address and read bit
+	for ( i = 0; i < 8; i++)
+	{
+		// After clock delay, clear SCL to 0
+		delay( ClockDelay );
+		SCL = 0;
+		
+		//Setting R/W to 1
+		output_byte = device_addr << 1;
+		output_byte |= 0x01;
+		
+		//setting current bit
+		address_bit = ((output_byte >> (7 - i)) & 0x01);
+		SDA = address_bit;
+		
+		//After clock delay, set SCL to 1
+		delay( ClockDelay );
+		if ( set_SCL() )
+		{
+			error_status = 2;
+			return error_status;
+		}
+		
+		//Read the value on SDA and verify that it is the same value sent
+		if (SDA != address_bit)
+		{
+			error_status = 1;
+			return error_status;
+		}
+	}
+	
+	//After a clock delay, clear SCL and set SDA
+	delay( ClockDelay );
+	SCL = 0;
+	SDA = 1;
+	
+	//After a clock delay, set SCL and wait until SCL = 1
+	if ( set_SCL() )
+	{
+		error_status = 2;
+		return error_status;
+	}
+	
+	//Checking for ACK
+	if ( SDA != 0 )
+	{
+		error_status = 3;
+		return error_status;
+	}
+	
+	//Reading received bits
+	for ( i = 0; i < 8; i++)
+	{
+		
+	}
+	
 	// Return error status
 	return error_status;
+}
+
+uint8 set_SCL()
+{
+	// Variable Declarations
+	uint8 timeout = 0;
+	
+	SCL = 1;
+	do
+	{
+		timeout++;
+	} while (SCL != 1 && timeout !=0);
+	if (timeout == 0)
+	{
+		return 1;
+	}
+	return 0;
 }
