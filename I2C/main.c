@@ -26,6 +26,8 @@ void main(void)
 	uint8 error = 0;
 	uint8 array_name[2];
 
+	array_name[0] = 0x01;
+
 	// Access more RAM
 	AUXR = 0x0C;
 
