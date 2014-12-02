@@ -192,13 +192,18 @@ uint8 I2C_Write(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 
 uint8 I2C_Read(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 {
-	// Variable declaration
+	//////ERROR VALUES//////
 	// Bus Busy = 1
 	// Slave timeout = 2
 	// Improper ACK = 3
+	///////////////////////
+	
+	// Variable declaration
 	uint8 error_status = 0;
 	uint8 timeout = 0;
+	uint8 received_byte = 0;
 	bit address_bit = 0;
+	
 	
 	//Setting initial states and verifying
 	SCL = 1;
@@ -258,12 +263,64 @@ uint8 I2C_Read(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 		error_status = 3;
 		return error_status;
 	}
-	
-	//Reading received bits
-	for ( i = 0; i < 8; i++)
+
+	//Read specified number of bytes
+	for (i = 1; i <= number_of_bytes; i++)
 	{
+		//Reading received bits and placing resulting byte into array
+		for ( j = 7; j <= 0; j--)
+		{
+			delay( ClockDelay );
+			SCL = 0;
+			SDA = 1;
+			delay( ClockDelay );
+			if ( set_SCL() )
+			{
+				error_status = 2;
+				return error_status;
+			}
+			received_byte |= (SDA << j) ;
+		}
+		array_name[i] = received_byte;
 		
+		delay( ClockDelay );
+		SCL = 0;
+		//Sending ACK for next byte
+		if ( i < number_of_bytes )
+		{	
+			SDA = 0;
+			delay( ClockDelay );
+			if ( set_SCL() )
+			{
+				error_status = 2;
+				return error_status;
+			}
+		}
+		//Sending NACK for last byte
+		else
+		{
+			SDA = 1;
+			delay( ClockDelay );
+			if ( set_SCL() )
+			{
+				error_status = 2;
+				return error_status;
+			}
+			SDA = 1;
+		}
 	}
+	
+	//Send STOP after last byte is read
+	delay( ClockDelay );
+	SCL = 0;
+	SDA = 0;
+	delay( ClockDelay );
+	if ( set_SCL() )
+	{
+		error_status = 2;
+		return error_status;
+	}
+	SDA = 1;
 	
 	// Return error status
 	return error_status;
