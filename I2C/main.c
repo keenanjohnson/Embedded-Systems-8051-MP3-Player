@@ -20,6 +20,11 @@
 void main(void)
 {
 	//variables
+	uint8 STA013 = 0x43;
+	uint16 timeout_val = 600;
+	uint16 timeout;
+	uint8 error = 0;
+	uint8 array_name[2];
 
 	// Access more RAM
 	AUXR = 0x0C;
@@ -29,6 +34,28 @@ void main(void)
 
 	while(1)
 	{
+		// Test code from step 4
+		// of the experiment
+		timeout=timeout_val;
+		do
+		{
+			error = I2C_Write( STA013, 1, array_name );
+			timeout--;
+		}while((error!=0)&&(timeout!=0));
+		if(timeout!=0)
+		{
+			timeout=timeout_val;
+			do
+			{
+				error=I2C_Read( STA013, 1, array_name );
+				timeout--;
+			}while((error!=0)&&(timeout!=0));
+			printf("I2C Read: %2.2bX", array_name[0]);
+		}
+		else
+		{
+			printf("timeout error\n\r");
+		}
 	}
 }
 
