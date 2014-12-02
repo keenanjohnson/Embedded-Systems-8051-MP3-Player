@@ -10,17 +10,12 @@
 
 #include "i2c.h"
 
-uint32 frequency;
-uint8 reload_high;
-uint8 reload_low;
-
 void set_frequency( uint32 desired_frequency )
 {
 	uint16 reload;
-	frequency = desired_frequency;
-	reload = 65536 - ((OSC_FREQ) / (OSC_PER_INST * 2 * frequency));
-	reload_high = reload << 8;
-	reload_low = reload & 0x00FF;
+	reload = 65536 - ((OSC_FREQ) / (OSC_PER_INST * 2 * desired_frequency));
+	timer1_reload_high = reload << 8;
+	timer1_reload_low = reload & 0x00FF;
 }
 
 void I2C_delay()
@@ -31,18 +26,19 @@ void I2C_delay()
 	//Disable interrupts
 	ET1 = 0;
 	
-	TH1 = reload_high;
-	TH2 = reload_low;
+	TH1 = timer1_reload_high;
+	TL1 = timer1_reload_low;
 	TF1 = 0;
 	TR1 = 1;
 	
 	//Wait until timer ends
-	while ( TR1 == 1 && TF1 == 0 );
+	while ( TF1 == 0 );
 	
 	//Stop the timer
 	TR1 = 0;
 	TF1 = 0;
 	
+	// Enable Timer1 Int
 	ET1 = 1;
 }
 

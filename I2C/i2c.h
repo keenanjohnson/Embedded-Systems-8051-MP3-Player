@@ -16,6 +16,9 @@
 #include "Main.h"
 #include "PORT.H"
 
+extern uint8 timer1_reload_high;
+extern uint8 timer1_reload_low;
+
 // Sets up I2C frequency
 void set_frequency( uint32 desired_frequency );
 

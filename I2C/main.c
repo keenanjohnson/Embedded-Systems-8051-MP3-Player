@@ -17,6 +17,9 @@
 #include "PORT.h"
 #include "uart.h"
 
+uint8 timer1_reload_high;
+uint8 timer1_reload_low;
+
 void main(void)
 {
 	//variables
@@ -33,6 +36,9 @@ void main(void)
 
 	// Uart at 9600 baud
 	uart_init();
+
+	// Set I2C Frequency
+	set_frequency( 100 );
 
 	while(1)
 	{
