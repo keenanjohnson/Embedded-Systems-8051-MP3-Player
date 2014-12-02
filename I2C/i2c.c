@@ -202,7 +202,11 @@ uint8 I2C_Read(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 	uint8 error_status = 0;
 	uint8 timeout = 0;
 	uint8 received_byte = 0;
-	bit address_bit = 0;
+	uint8 address_output_byte;
+	uint8 temp;
+	uint8 i;
+	uint8 j;
+	bit address_bit;
 	
 	
 	//Setting initial states and verifying
@@ -214,6 +218,9 @@ uint8 I2C_Read(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 		return error_status;
 	}
 	
+	//Setting R/W to 1
+	address_output_byte = ((device_addr << 1) | 0x01);
+		
 	//Send the 7-bit device address and read bit
 	for ( i = 0; i < 8; i++)
 	{
@@ -221,12 +228,8 @@ uint8 I2C_Read(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 		delay( ClockDelay );
 		SCL = 0;
 		
-		//Setting R/W to 1
-		output_byte = device_addr << 1;
-		output_byte |= 0x01;
-		
 		//setting current bit
-		address_bit = ((output_byte >> (7 - i)) & 0x01);
+		address_bit = ((address_output_byte >> (7 - i)) & 0x01);
 		SDA = address_bit;
 		
 		//After clock delay, set SCL to 1
@@ -279,7 +282,9 @@ uint8 I2C_Read(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 				error_status = 2;
 				return error_status;
 			}
-			received_byte |= (SDA << j) ;
+			temp = SDA;
+			received_byte |= (temp << j);
+			temp = 0;
 		}
 		array_name[i] = received_byte;
 		
