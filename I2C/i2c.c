@@ -10,6 +10,42 @@
 
 #include "i2c.h"
 
+uint32 frequency;
+uint8 reload_high;
+uint8 reload_low;
+
+void set_frequency( uint32 desired_frequency )
+{
+	uint16 reload;
+	frequency = desired_frequency;
+	reload = 65536 - ((OSC_FREQ) / (OSC_PER_INST * 2 * frequency));
+	reload_high = reload << 8;
+	reload_low = reload & 0x00FF;
+}
+
+void I2C_delay()
+{
+	TMOD &= 0x0F;
+	TMOD |= 0x10;
+	
+	//Disable interrupts
+	ET1 = 0;
+	
+	TH1 = reload_high;
+	TH2 = reload_low;
+	TF1 = 0;
+	TR1 = 1;
+	
+	//Wait until timer ends
+	while ( TR1 == 1 && TF1 == 0 );
+	
+	//Stop the timer
+	TR1 = 0;
+	TF1 = 0;
+	
+	ET1 = 1;
+}
+
 uint8 I2C_Write(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 {
 	// Variable declaration
@@ -46,7 +82,7 @@ uint8 I2C_Write(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 	for( index = 0; index < 8; index++ )
 	{
 		// Delay and set SCL to 0
-		delay( ClockDelay );
+		I2C_delay();
 		SCL = 0;
 
 	   	// Calculate bit to send
@@ -56,7 +92,7 @@ uint8 I2C_Write(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 		SDA = outputBit;
 
 		// Set SCL to 1 after delay
-		delay( ClockDelay );
+		I2C_delay();
 		SCL = 1;
 
 		// Wait for other devices to be 
@@ -81,14 +117,14 @@ uint8 I2C_Write(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 	// Set SDA to 1
 	// This allows slave device to respond
 	// with ACK
-	delay( ClockDelay );
+	I2C_delay();
 	SCL = 0;
 	SDA = 1;
 
 	// After clock delay,
 	// Set SCL to 1 and wait
 	// until SCL = 1
-	delay( ClockDelay );
+	I2C_delay();
 	SCL = 1;
 	while( SCL != 1 );
 
@@ -116,7 +152,7 @@ uint8 I2C_Write(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 		for( index = 0; index < 8; index++ )
 		{
 			// Delay and set SCL to 0
-			delay( ClockDelay );
+			I2C_delay();
 			SCL = 0;
 	
 		   	// Calculate bit to send
@@ -126,7 +162,7 @@ uint8 I2C_Write(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 			SDA = outputBit;
 	
 			// Set SCL to 1 after delay
-			delay( ClockDelay );
+			I2C_delay();
 			SCL = 1;
 	
 			// Wait for other devices to be 
@@ -151,14 +187,14 @@ uint8 I2C_Write(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 		// Set SDA to 1
 		// This allows slave device to respond
 		// with ACK
-		delay( ClockDelay );
+		I2C_delay();
 		SCL = 0;
 		SDA = 1;
 	
 		// After clock delay,
 		// Set SCL to 1 and wait
 		// until SCL = 1
-		delay( ClockDelay );
+		I2C_delay();
 		SCL = 1;
 		while( SCL != 1 );
 	
@@ -178,10 +214,10 @@ uint8 I2C_Write(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 	/////////////////////////
 	// Send Stop Condition
 	/////////////////////////
-	delay( ClockDelay );
+	I2C_delay();
 	SCL = 0;
 	SDA = 0;
-	delay( ClockDelay );
+	I2C_delay();
 	SCL = 1;
 	while( SCL != 1 );
 	SDA = 1;
@@ -192,12 +228,6 @@ uint8 I2C_Write(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 
 uint8 I2C_Read(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 {
-	//////ERROR VALUES//////
-	// Bus Busy = 1
-	// Slave timeout = 2
-	// Improper ACK = 3
-	///////////////////////
-	
 	// Variable declaration
 	uint8 error_status = 0;
 	uint8 timeout = 0;
@@ -225,7 +255,7 @@ uint8 I2C_Read(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 	for ( i = 0; i < 8; i++)
 	{
 		// After clock delay, clear SCL to 0
-		delay( ClockDelay );
+		I2C_delay();
 		SCL = 0;
 		
 		//setting current bit
@@ -233,7 +263,7 @@ uint8 I2C_Read(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 		SDA = address_bit;
 		
 		//After clock delay, set SCL to 1
-		delay( ClockDelay );
+		I2C_delay();
 		if ( set_SCL() )
 		{
 			error_status = 2;
@@ -249,7 +279,7 @@ uint8 I2C_Read(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 	}
 	
 	//After a clock delay, clear SCL and set SDA
-	delay( ClockDelay );
+	I2C_delay();
 	SCL = 0;
 	SDA = 1;
 	
@@ -273,10 +303,10 @@ uint8 I2C_Read(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 		//Reading received bits and placing resulting byte into array
 		for ( j = 7; j <= 0; j--)
 		{
-			delay( ClockDelay );
+			I2C_delay();
 			SCL = 0;
 			SDA = 1;
-			delay( ClockDelay );
+			I2C_delay();
 			if ( set_SCL() )
 			{
 				error_status = 2;
@@ -288,13 +318,13 @@ uint8 I2C_Read(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 		}
 		array_name[i] = received_byte;
 		
-		delay( ClockDelay );
+		I2C_delay();
 		SCL = 0;
 		//Sending ACK for next byte
 		if ( i < number_of_bytes )
 		{	
 			SDA = 0;
-			delay( ClockDelay );
+			I2C_delay();
 			if ( set_SCL() )
 			{
 				error_status = 2;
@@ -305,7 +335,7 @@ uint8 I2C_Read(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 		else
 		{
 			SDA = 1;
-			delay( ClockDelay );
+			I2C_delay();
 			if ( set_SCL() )
 			{
 				error_status = 2;
@@ -316,10 +346,10 @@ uint8 I2C_Read(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 	}
 	
 	//Send STOP after last byte is read
-	delay( ClockDelay );
+	I2C_delay();
 	SCL = 0;
 	SDA = 0;
-	delay( ClockDelay );
+	I2C_delay();
 	if ( set_SCL() )
 	{
 		error_status = 2;

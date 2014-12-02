@@ -16,8 +16,11 @@
 #include "Main.h"
 #include "PORT.H"
 
-//FIXME: Set actual clock delay
-#define ClockDelay 1
+// Sets up I2C frequency
+void set_frequency( uint32 desired_frequency );
+
+//Begins I2C Delay sequence
+void I2C_delay( void );
 
 // Sends data out on the I2C bus
 //
@@ -34,6 +37,17 @@
 uint8 I2C_Write(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name);
 
 // Reads data from the I2C bus
+//
+// device_addr -> the first byte sent
+//number_of_bytes -> number of bytes in array_name
+//array_name -> the array to which received data is written
+//
+//////RETURN VALUES//////
+// Success = 0
+// Bus Busy = 1
+// Slave timeout = 2
+// Improper ACK = 3
+///////////////////////
 uint8 I2C_Read(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name);
 
 //Sets SCL and verifies
