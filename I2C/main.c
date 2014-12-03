@@ -30,8 +30,6 @@ void main(void)
 	uint8 error = 0;
 	uint8 array_name[2];
 
-	array_name[0] = 0x01;
-
 	// Access more RAM
 	AUXR = 0x0C;
 
@@ -47,6 +45,7 @@ void main(void)
 		{
 			printf("Writing to STA013");
 			print_newline();
+			array_name[0] = 0x01;
 			error = I2C_Write( STA013, 1, array_name );
 			if (error==1)
 			{
