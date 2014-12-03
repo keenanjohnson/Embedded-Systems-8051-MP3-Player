@@ -38,9 +38,6 @@ void main(void)
 	// Uart at 9600 baud
 	uart_init();
 
-	// Set I2C Frequency
-	set_frequency( 100000 );
-
 	while(1)
 	{
 		// Test code from step 4
@@ -51,6 +48,18 @@ void main(void)
 			printf("Writing to STA013");
 			print_newline();
 			error = I2C_Write( STA013, 1, array_name );
+			if (error==1)
+			{
+				// Bus busy error
+				printf("Write - Bus Busy Error");
+				print_newline();
+			}
+			if (error==2)
+			{
+				// NACK error
+				printf("Write - NACK Error");
+				print_newline();
+			}
 			timeout--;
 		}while((error!=0)&&(timeout!=0));
 		if(timeout!=0)
@@ -87,6 +96,7 @@ void main(void)
 				timeout--;
 			}while((error!=0)&&(timeout!=0));
 			printf("I2C Read: %2.2bX", array_name[0]);
+			print_newline();
 		}
 		else
 		{
