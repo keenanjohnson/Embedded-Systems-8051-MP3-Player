@@ -11,10 +11,13 @@
 #ifndef I2C_H
 #define I2C_H
 
+#include <stdio.h>
+
 #include "AT89C51RC2.h"
 #include "delay.h"
 #include "Main.h"
 #include "PORT.H"
+#include "print.h"
 
 extern uint8 timer1_reload_high;
 extern uint8 timer1_reload_low;

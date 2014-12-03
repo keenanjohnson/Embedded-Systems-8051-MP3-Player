@@ -16,6 +16,7 @@
 #include "Main.h"
 #include "PORT.h"
 #include "uart.h"
+#include "print.h"
 
 uint8 timer1_reload_high;
 uint8 timer1_reload_low;
@@ -47,6 +48,8 @@ void main(void)
 		timeout=timeout_val;
 		do
 		{
+			printf("Writing to STA013");
+			print_newline();
 			error = I2C_Write( STA013, 1, array_name );
 			timeout--;
 		}while((error!=0)&&(timeout!=0));
@@ -55,7 +58,32 @@ void main(void)
 			timeout=timeout_val;
 			do
 			{
+				printf("Reading from STA013");
+				print_newline();
 				error=I2C_Read( STA013, 1, array_name );
+				switch( error )
+				{
+					case 0:
+					printf("Read successful");
+					print_newline();
+					break;
+					case 1:
+					printf("I2C Read Error: Bus Busy");
+					print_newline();
+					break;
+					case 2:
+					printf("I2C Read Error: Slave Device timeout");
+					print_newline();
+					break;
+					case 3:
+					printf("I2C Read Error: Improper ACK");
+					print_newline();
+					break;
+					default:
+					printf("Unspecified Error");
+					print_newline();
+					break;
+				}
 				timeout--;
 			}while((error!=0)&&(timeout!=0));
 			printf("I2C Read: %2.2bX", array_name[0]);

@@ -246,6 +246,8 @@ uint8 I2C_Read(uint8 device_addr, uint8 number_of_bytes, uint8 *array_name)
 	
 	//Setting R/W to 1
 	address_output_byte = ((device_addr << 1) | 0x01);
+	printf("Address output byte = %2.2bX", address_output_byte);
+	print_newline();
 		
 	//Send the 7-bit device address and read bit
 	for ( i = 0; i < 8; i++)
