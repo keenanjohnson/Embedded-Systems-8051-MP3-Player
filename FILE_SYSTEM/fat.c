@@ -189,7 +189,7 @@ uint32 First_Sector(uint32 clusterNum)
 	}
 
 	// Calculate the offset address for the cluster number entry
-	current_offset = offset%BYTESPERSECTOR;
+	current_offset = offset&(BYTESPERSECTOR-1);
 	printf("Current Offset = %lu",current_offset);
 	print_newline();
 
@@ -264,7 +264,7 @@ uint8 Open_File(uint32 Cluster, uint8 xdata *array_in)
 					scanf("%c", &input);
 					
 					// Check for End of File
-					if ( currentCluster  == 0xFFFFFFFF ) 
+					if ( currentCluster == 0xFFFFFFFF ) 
 					{
 						// End of file detected
 						// Stop the loop
