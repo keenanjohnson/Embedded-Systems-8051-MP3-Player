@@ -36,8 +36,8 @@ sbit P0_6 = P0^6;
 sbit P0_7 = P0^7; 
 
 // Port 1
-//sbit SDA = P1^0;
-//sbit SCL = P1^1;
+//sbit P1_0 = P1^0;
+//sbit P1_1 = P1^1;
 sbit DATA_REQ = P1^2;
 sbit BIT_EN = P1^3;
 sbit nCS0 = P1^4;

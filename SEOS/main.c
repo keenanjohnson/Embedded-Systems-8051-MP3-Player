@@ -1,3 +1,15 @@
+// main.c
+//
+// Keenan Johnson
+// Franco Santa-Maria
+//
+// Submission for experiment 6
+//
+// Simple Embedded Operating System
+//
+// CpE 4160
+// FALL 2014
+
 #include "stdio.h"
 #include "main.h"
 #include "PORT.H"
@@ -9,9 +21,10 @@
 #include "Directory_Functions.h"
 #include "File_System.h"
 #include "I2C.h"
+#include "seos.h"
+#include "Timer2_ISR.h"
 
-
-
+// Globals
 xdata uint8 buf1[512];
 xdata uint8 buf2[512];
 
@@ -20,13 +33,15 @@ extern uint32 idata FirstRootDirSec_g;
 // Private Function Prototypes
 void Play_Song(uint32 Start_Cluster);
 
-
 main()
 {
    uint32 Current_directory, Entry_clus;
    uint16 i, num_entries, entry_num;
    uint8 error_flag;
 
+   /////////////////////
+   // INIT
+   /////////////////////
    AMBERLED=OFF;
    YELLOWLED=OFF;
    GREENLED=OFF;
@@ -78,31 +93,34 @@ main()
    }
    Current_directory=FirstRootDirSec_g;
    
+    // Init MP3 Decoder
+    STA013_init(); 
    
-
-    STA013_init();   
-   // Main Loop
-
-   while(1)
-   {
-       printf("Directory Sector = %lu\n\r",Current_directory);
-       num_entries=Print_Directory(Current_directory, buf1);
-	   printf("Enter Selection = ");
-  	   entry_num=(uint16)long_serial_input();
-	   if(entry_num<=num_entries)
-	   {
-	      Entry_clus=Read_Dir_Entry(Current_directory, entry_num, buf1);
-		  if(Entry_clus&directory_bit)
-		  {
+    //////////////////
+    // Main Loop
+	//////////////////
+    while(1)
+    {
+        printf("Directory Sector = %lu\n\r",Current_directory);
+        num_entries=Print_Directory(Current_directory, buf1);
+	    printf("Enter Selection = ");
+  	    entry_num=(uint16)long_serial_input();
+	    if(entry_num<=num_entries)
+	    {
+	       Entry_clus=Read_Dir_Entry(Current_directory, entry_num, buf1);
+		   if(Entry_clus&directory_bit)
+		   {
 		     Entry_clus&=0x0FFFFFFF;
              Current_directory=First_Sector(Entry_clus);
-		  }
- 	      else
-		  {
-		     Open_File(Entry_clus, buf1);
-			 //Play_Song(Entry_clus);
-		  }
-		  
+		   }
+ 	        else
+		    {
+                // File Selected
+                Open_File(Entry_clus, buf1);
+                
+                // Start OS
+                seos_run();
+		    }	  
 	   }
 	   else
 	   {
@@ -111,9 +129,7 @@ main()
    }
 } 
 
-
 //-------------- Private Functions --------------------------------------------------
-
 void Play_Song(uint32 Start_Cluster)
 {
    uint16 index1, index2;
@@ -374,7 +390,6 @@ YELLOWLED=OFF;
        }
    }while(sector_offset<128);   
    GREENLED=1;
-//   P3_2=OFF;
   }  
 
    
