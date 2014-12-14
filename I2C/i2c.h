@@ -22,9 +22,6 @@
 #define I2C_RELOAD_H (I2C_RELOAD/256)
 #define I2C_RELOAD_L (I2C_RELOAD%256)
 
-// Sets up I2C frequency
-void set_frequency( uint32 desired_frequency );
-
 //Begins I2C Delay sequence
 void I2C_delay( void );
 
