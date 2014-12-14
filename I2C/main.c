@@ -17,6 +17,7 @@
 #include "PORT.h"
 #include "uart.h"
 #include "print.h"
+#include "delay.h"
 
 extern code uint8 CONFIG;
 extern code uint8 CONFIG2;

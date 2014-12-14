@@ -13,14 +13,14 @@
 
 #include <stdio.h>
 
-#include "AT89C51RC2.h"
-#include "delay.h"
 #include "Main.h"
 #include "PORT.H"
 #include "print.h"
 
-extern uint8 timer1_reload_high;
-extern uint8 timer1_reload_low;
+#define I2C_FREQ (10000UL)
+#define I2C_RELOAD (65536-((OSC_FREQ)/(OSC_PER_INST*I2C_FREQ*2)))
+#define I2C_RELOAD_H (I2C_RELOAD/256)
+#define I2C_RELOAD_L (I2C_RELOAD%256)
 
 // Sets up I2C frequency
 void set_frequency( uint32 desired_frequency );

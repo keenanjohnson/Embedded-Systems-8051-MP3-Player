@@ -12,7 +12,8 @@ void delay( uint32 ms_to_delay )
 {
     uint32 millisec;
     
-    TMOD &= 0xF0; // Set up TMOD
+    // Set up TMOD
+    TMOD &= 0xF0;
     TMOD |= 0x01;
     
     ET0 = 0; // Disable timer 0 interrupt
@@ -23,8 +24,7 @@ void delay( uint32 ms_to_delay )
         TH0 = PRELOADH1; // Timer values
         TL0 = PRELOADL1;
         
-        TF0 = 0; // clears overflow flag
-        
+        TF0 = 0; // clears overflow flag   
         TR0 = 1; // starts the timer
         
         while(TF0 == 0); // Check for overflow
