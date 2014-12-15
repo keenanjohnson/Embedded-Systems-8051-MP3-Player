@@ -10,7 +10,6 @@
 // CpE 4160
 // FALL 2014
 
-//#include "Timer2_ISR.h"
 #include "Main.h"
 #include "PORT.H"
 #include "SDCard.h"

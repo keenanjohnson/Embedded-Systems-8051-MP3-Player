@@ -28,6 +28,8 @@ extern uint8 idata SecPerClus_g;
 
 void seos_init( uint32 First_clus )
 {
+    REDLED=OFF;
+
     // Set first cluster global
     CurrentCluster_g = First_clus;
     
@@ -105,7 +107,7 @@ void Timer2_ISR (void) interrupt Timer_2_Overflow
                 STATE = DATA_SEND_1;
             break;
         case DATA_SEND_1:
-			YELLOWLED=ON;
+            GREENLED=ON;
             if( ((Buffer1Position_g==512) && (Buffer2Position_g==512)) || ((DATA_REQ == DR_INACTIVE) && (Buffer2Position_g==512)) )
             {
                 if( ClusterEmpty_g )
@@ -140,10 +142,10 @@ void Timer2_ISR (void) interrupt Timer_2_Overflow
                 else if( (Buffer1Position_g == 512 ) )
                 {
                     STATE = DATA_SEND_2;
-                }
+                }            
             }
+            GREENLED=OFF;
             break;
-			YELLOWLED=OFF;
         case FIND_CLUS_2:
             CurrentCluster_g = Find_Cluster_And_Check_EOF( CurrentCluster_g, buf2 );
             STATE = DATA_IDLE_1;
@@ -159,7 +161,7 @@ void Timer2_ISR (void) interrupt Timer_2_Overflow
             }
             break;
         case DATA_SEND_2:
-            REDLED=ON;
+            AMBERLED=ON;
             if( ((DATA_REQ == DR_INACTIVE) && (Buffer1Position_g==512)) || ((Buffer1Position_g==512) && (Buffer2Position_g == 512)) )
             {
                 if( ClusterEmpty_g )
@@ -196,7 +198,7 @@ void Timer2_ISR (void) interrupt Timer_2_Overflow
                     STATE = DATA_SEND_1;
                 }
             }
-            REDLED=OFF;
+            AMBERLED=OFF;
             break;
     }
 }
@@ -205,8 +207,16 @@ uint32 Find_Cluster_And_Check_EOF( uint32 current_cluster, uint8 xdata *buffer )
 {
     uint32 idata next_cluster;
     
+    YELLOWLED = ON;
+    
     // Get next cluster
     next_cluster = Find_Next_Clus(current_cluster, buffer);
+
+	// Set next sector global
+    Sector_g = First_Sector( next_cluster );
+    
+    // Unset cluster empty flag
+    ClusterEmpty_g = 0;
     
     // Set buffer position to zero
     if ( buffer == buf1 )
@@ -220,11 +230,8 @@ uint32 Find_Cluster_And_Check_EOF( uint32 current_cluster, uint8 xdata *buffer )
         Buffer2Position_g = 0;
     }
 
-    // Set next sector global
-    Sector_g = First_Sector( next_cluster );
-
     // Check for end of file in FAT32
-    if ( next_cluster == 0x0FFFFFFF )
+    if ( next_cluster >= (0x0FFFFFF8) )
     {
         // Set end of file flag
         // to end while loop
@@ -233,10 +240,9 @@ uint32 Find_Cluster_And_Check_EOF( uint32 current_cluster, uint8 xdata *buffer )
         
         // Disable timer2
         TR2 = 0;
+        
+        REDLED=ON;
     }
-    
-    // Set cluster empty flag
-    ClusterEmpty_g = 0;
     
     // Return next cluster
     return next_cluster;
@@ -290,6 +296,13 @@ void load_buffer( uint8 xdata *buffer )
 
 	// Increment sector offset global
 	SectorOffset_g++;
+
+	// Check for end of cluster
+	if ( SectorOffset_g == SecPerClus_g )
+	{
+		// Set cluster empty flag
+		ClusterEmpty_g = 1;
+	}
     
     // Set buffer position to zero
     if ( buffer == buf1 )
@@ -302,12 +315,6 @@ void load_buffer( uint8 xdata *buffer )
         // Buf 2
         Buffer2Position_g = 0;
     }
-
-	if ( SectorOffset_g > (SecPerClus_g-1) )
-	{
-		// Set cluster empty flag
-		ClusterEmpty_g = 1;
-	}
 }
 
 void Timer2_ISR_Init( void ) 
