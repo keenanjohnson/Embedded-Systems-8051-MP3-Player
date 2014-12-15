@@ -34,10 +34,6 @@ uint8 Mount_Drive(uint8 xdata * array_name);
 
 uint32 First_Sector (uint32 Cluster_num);
 
-//uint16 Print_Directory(uint32 Sector_num, uint8 xdata * array_in);
-
-//uint32 Read_Dir_Entry(uint32 Sector_num, uint16 Entry, uint8 xdata * array_in);
-
 uint32 Find_Next_Clus(uint32 Cluster_num, uint8 xdata * array_name);
 
 uint8 Open_File(uint32 Cluster, uint8 xdata * array_in);

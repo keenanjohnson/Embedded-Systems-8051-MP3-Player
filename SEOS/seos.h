@@ -20,7 +20,7 @@
 #define DR_ACTIVE (0)
 #define DR_INACTIVE (1)
 
-#define interval_ms (15)
+#define interval_ms (11)
 #define Timer2_RELOAD (65536-((OSC_FREQ*interval_ms)/(OSC_PER_INST*1000UL)))
 #define Timer2_RELOAD_H (Timer2_RELOAD/256)
 #define Timer2_RELOAD_L (Timer2_RELOAD%256)
