@@ -16,16 +16,43 @@ enum seos_state_t STATE;
 extern uint8 idata Buffer1Empty_g;
 extern uint8 idata Buffer2Empty_g;
 extern uint8 idata ClusterEmpty_g;
+extern xdata uint8 buf1[512];
+extern xdata uint8 buf2[512];
 
-void seos_init( void )
+void seos_init( uint32 First_clus )
 {
+    uint32 sector, sector_offset;
+
+    // Calculate first sector
+    sector=First_Sector( First_clus );
+    sector_offset=0;
+    
+    // Load Buffer 1
+    YELLOWLED=ON;
+    nCS0=0;
+    SEND_COMMAND(17,sector+sector_offset);
+    read_block(512,buf1);
+    sector_offset++;
+    nCS0=1;
+    YELLOWLED=OFF;
+    
+    // Load Buffer 2
+    AMBERLED=ON;
+    nCS0=0;
+    SEND_COMMAND(17,sector+sector_offset);
+    read_block(512,buf2);
+    sector_offset++;
+    nCS0=1;
+    AMBERLED=OFF;
+
+    // Set up timer for interrupt
     Timer2_ISR_Init();
 }
 
 void seos_run( uint32 First_clus )
 {
     // Init
-    seos_init();
+    seos_init( First_clus );
     
     // ADD TIMEOUT
     while(1)
