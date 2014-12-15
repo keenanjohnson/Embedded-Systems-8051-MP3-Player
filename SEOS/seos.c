@@ -11,6 +11,8 @@
 // FALL 2014
 #include "seos.h"
 
+#include <stdio.h>
+
 enum seos_state_t STATE;
 
 extern uint16 idata Buffer1Position_g;
@@ -65,6 +67,8 @@ void seos_init( uint32 First_clus )
     // Set End of Song to false
     EndOfSong_g = 0;
     
+    ClusterEmpty_g=0;
+    
     // Set up timer for interrupt
     Timer2_ISR_Init();
 }
@@ -89,26 +93,24 @@ void Timer2_ISR (void) interrupt Timer_2_Overflow
     switch( STATE )
     {
         case FIND_CLUS_1:
-			GREENLED=ON;
+			printf("Find_Clus_1**************\n\r");
             CurrentCluster_g = Find_Cluster_And_Check_EOF( CurrentCluster_g, buf1 );
             STATE = DATA_IDLE_2;
-			GREENLED=OFF;
             break;
         case LOAD_BUF_1:
-			AMBERLED=ON;
+			printf("Load_Buf_1************\n\r");
             load_buffer( buf1 );
             STATE = DATA_IDLE_2;
-			AMBERLED=OFF;
             break;
         case DATA_IDLE_1:
-			REDLED=ON;
+			printf("Data_Idle_1********************\n\r");
             if( DATA_REQ == DR_ACTIVE )
                 STATE = DATA_SEND_1;
-			REDLED=OFF;
             break;
         case DATA_SEND_1:
+			printf("Data_Send_1\n\r");
 			YELLOWLED=ON;
-            if( ((Buffer1Position_g==512) && (Buffer2Position_g==512)) || ((DATA_REQ == DR_INACTIVE) && (Buffer2Position_g==512)))
+            if( ((Buffer1Position_g==512) && (Buffer2Position_g==512)) || ((DATA_REQ == DR_INACTIVE) && (Buffer2Position_g==512)) )
             {
                 if( ClusterEmpty_g )
                 {
@@ -132,21 +134,25 @@ void Timer2_ISR (void) interrupt Timer_2_Overflow
             break;
 			YELLOWLED=OFF;
         case FIND_CLUS_2:
+			printf("Find_Clus_2***********\n\r");
             CurrentCluster_g = Find_Cluster_And_Check_EOF( CurrentCluster_g, buf2 );
             STATE = DATA_IDLE_1;
             break;
         case LOAD_BUF_2:
+			printf("Load_Buf_2***********\n\r");
             load_buffer( buf2 );
             STATE = DATA_IDLE_1;
             break;
         case DATA_IDLE_2:
+			printf("Data_Idle_2***************\n\r");
             if( DATA_REQ == DR_ACTIVE )
             {
                 STATE = DATA_SEND_2;
             }
             break;
         case DATA_SEND_2:
-            if( ((DATA_REQ == DR_INACTIVE) && (Buffer1Position_g==512 )) || ((Buffer1Position_g==512) && (Buffer2Position_g == 512)) )
+			printf("Dat_Send_2\n\r");
+            if( ((DATA_REQ == DR_INACTIVE) && (Buffer1Position_g==512)) || ((Buffer1Position_g==512) && (Buffer2Position_g == 512)) )
             {
                 if( ClusterEmpty_g )
                 {
@@ -159,7 +165,7 @@ void Timer2_ISR (void) interrupt Timer_2_Overflow
             }
             else if((Buffer2Position_g==512))
             {
-                STATE = DATA_SEND_2;
+                STATE = DATA_SEND_1;
             }
             if( DATA_REQ == DR_INACTIVE )
                 STATE = DATA_IDLE_2;
@@ -193,31 +199,45 @@ uint32 Find_Cluster_And_Check_EOF( uint32 current_cluster, uint8 xdata *buffer )
         TR2 = 0;
     }
     
+    // Set cluster empty flag
+    ClusterEmpty_g = 0;
+    
     // Return next cluster
     return next_cluster;
 }
 
 void send_buffer( uint8 xdata *buffer )
 {
-    // Set Enable High
-    BIT_EN=1;
-    
-    // Set buffer position global
     if ( buffer == buf1 )
     {
-        // Send buffer 1 byte
-        SPI_Transfer( buffer[Buffer1Position_g] );
-        Buffer1Position_g++;
+        while( (DATA_REQ == DR_ACTIVE) && (Buffer1Position_g < 512) )
+        {
+            // Set Enable High
+            BIT_EN=1;
+            
+            // Send buffer 1 byte
+            SPI_Transfer( buffer[Buffer1Position_g] );
+            Buffer1Position_g++;
+            
+            // Set Enable Low
+            BIT_EN=0;
+        }
     }
     else
     {
-        // Send buffer2 byte
-        SPI_Transfer( buffer[Buffer2Position_g] );
-        Buffer2Position_g++;
+        while( (DATA_REQ == DR_ACTIVE) && (Buffer2Position_g < 512) )
+        {
+            // Set Enable High
+            BIT_EN=1;
+            
+            // Send buffer2 byte
+            SPI_Transfer( buffer[Buffer2Position_g] );
+            Buffer2Position_g++;
+            
+            // Set Enable Low
+            BIT_EN=0;
+        }
     }
-    
-    // Set Enable Low
-    BIT_EN=0;
 }
 
 void load_buffer( uint8 xdata *buffer )
