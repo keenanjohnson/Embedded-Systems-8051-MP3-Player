@@ -36,7 +36,7 @@ uint32 First_Sector (uint32 Cluster_num);
 
 uint32 Find_Next_Clus(uint32 Cluster_num, uint8 xdata * array_name);
 
-uint8 Open_File(uint32 Cluster, uint8 xdata * array_in);
+//uint8 Open_File(uint32 Cluster, uint8 xdata * array_in);
 
 
 #endif

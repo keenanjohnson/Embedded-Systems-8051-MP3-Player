@@ -12,6 +12,7 @@ INPUT: Pointer to an array of eight bytes
 RETURNS: nothing
 CAUTION: 
 ************************************************************************/
+/*
 void print_16bytes(uint8 * array_in)
 {
    uint8 * input;
@@ -34,6 +35,7 @@ void print_16bytes(uint8 * array_in)
    putchar(CR);
    putchar(LF);
 }
+*/
 
 
 /***********************************************************************
@@ -42,6 +44,7 @@ INPUT: Pointer to an array, number of bytes to print
 RETURNS: nothing
 CAUTION: 
 ************************************************************************/
+/*
 void print_memory(uint16 number_of_bytes, uint8 * array_in)
 {
    uint8 * input;
@@ -57,4 +60,4 @@ void print_memory(uint16 number_of_bytes, uint8 * array_in)
       input+=16;
    }while(input<(array_in+number_of_bytes));
 }
-		
+*/		

@@ -202,14 +202,14 @@ uint32 Find_Next_Clus(uint32 Cluster_num, uint8 xdata * array_name)
    read_block(512,values);
    nCS0=1;
    FAToffset=(uint16)((Cluster_num<<FATshift_g)&(BytesPerSec_g-1));
-   if(FATtype_g==FAT32)    // FAT32
-   {
+   //if(FATtype_g==FAT32)    // FAT32
+   //{
        return_clus=(read32(FAToffset,values)&0x0FFFFFFF);
-   }
-   else if(FATtype_g==FAT16)    // FAT16
-   {
-       return_clus=(uint32)(read16(FAToffset,values));
-   }
+   //}
+   //else if(FATtype_g==FAT16)    // FAT16
+   //{
+   //    return_clus=(uint32)(read16(FAToffset,values));
+   //}
    return return_clus;
 }
    
@@ -225,7 +225,7 @@ RETURNS: Uint8 0
 CAUTION: 
 ************************************************************************/
 
-
+/*
 uint8 Open_File(uint32 Cluster_num, uint8 xdata * array_in)
 {
    uint32 Sector, SecOffset;
@@ -262,6 +262,7 @@ uint8 Open_File(uint32 Cluster_num, uint8 xdata * array_in)
    putchar(0x0a);
 return 0;
 }
+*/
 
 
 

@@ -76,13 +76,13 @@ void seos_init( uint32 First_clus )
 
 void seos_run( uint32 First_clus )
 {
-    // Init
+	// Init
     seos_init( First_clus );
     
     // Check for end of song
     while( !EndOfSong_g )
 	{
-        // Do Nothing
+        update_MP3_Display();
 	}
 }
 
@@ -212,28 +212,31 @@ uint32 Find_Cluster_And_Check_EOF( uint32 current_cluster, uint8 xdata *buffer )
     // Get next cluster
     next_cluster = Find_Next_Clus(current_cluster, buffer);
 
-	// Set next sector global
-    Sector_g = First_Sector( next_cluster );
-    
-    // Unset cluster empty flag
-    ClusterEmpty_g = 0;
-    
-    // Set buffer position to zero
-    if ( buffer == buf1 )
+	// Check for end of file in FAT32
+    if ( next_cluster != (0x0FFFFFFF) )
     {
-        // Buf 1
-        Buffer1Position_g = 0;
+		// Set next sector global
+   		Sector_g = First_Sector( next_cluster );
+		SectorOffset_g = 0;
+
+	    // Unset cluster empty flag
+	    ClusterEmpty_g = 0;
+	    
+	    // Set buffer position to zero
+	    if ( buffer == buf1 )
+	    {
+	        // Buf 1
+	        Buffer1Position_g = 0;
+	    }
+	    else
+	    {
+	        // Buf 2
+	        Buffer2Position_g = 0;
+	    }
     }
     else
-    {
-        // Buf 2
-        Buffer2Position_g = 0;
-    }
-
-    // Check for end of file in FAT32
-    if ( next_cluster >= (0x0FFFFFF8) )
-    {
-        // Set end of file flag
+	{
+		// Set end of file flag
         // to end while loop
         // for OS
         EndOfSong_g = 1;
@@ -241,8 +244,8 @@ uint32 Find_Cluster_And_Check_EOF( uint32 current_cluster, uint8 xdata *buffer )
         // Disable timer2
         TR2 = 0;
         
-        REDLED=ON;
-    }
+        REDLED=ON;	
+	}
     
     // Return next cluster
     return next_cluster;
@@ -298,7 +301,7 @@ void load_buffer( uint8 xdata *buffer )
 	SectorOffset_g++;
 
 	// Check for end of cluster
-	if ( SectorOffset_g == SecPerClus_g )
+	if ( SectorOffset_g >= SecPerClus_g )
 	{
 		// Set cluster empty flag
 		ClusterEmpty_g = 1;
@@ -329,4 +332,13 @@ void Timer2_ISR_Init( void )
   TR2=1;
   EA=1;
 }
+
+void update_MP3_Display( void )
+{
+	LCD_Print(13, "Song Playing!");	
+
+	// Clear display
+	//LCD_Write(bit RegSelect, uint8 LCD_Data);
+}
+
 

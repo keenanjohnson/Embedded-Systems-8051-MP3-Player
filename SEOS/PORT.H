@@ -65,8 +65,8 @@ sbit RxD_pin = P3^1;
 sbit STA013_RESET = P3^3;
 sbit SCL = P3^4;
 sbit SDA = P3^5;
-sbit P3_6 = P3^6;
-sbit P3_7 = P3^7; 
+sbit RS = P3^6;
+sbit E = P3^7; 
 
 
 #endif

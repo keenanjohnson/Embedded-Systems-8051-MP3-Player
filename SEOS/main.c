@@ -22,6 +22,7 @@
 #include "File_System.h"
 #include "I2C.h"
 #include "seos.h"
+#include "LCD_routines.h"
 
 // Globals
 xdata uint8 buf1[512];
@@ -62,7 +63,15 @@ main()
    {
       CKCON0=0x00;  // set standard clock mode
    } 
+
+   // Init LCD
+   LCD_Init();
+   LCD_Print(10, "Sys. Init.");
+
+   // UART Init
    uart_init();
+
+   // I2C Test
    printf("I2C Test Program\n\r\n\n");
    error_flag=SPI_Master_Init(400000UL);
    if(error_flag!=no_errors)
@@ -70,6 +79,8 @@ main()
       REDLED=ON;
       while(1);
    }
+
+   // SD Card Init
    printf("SD Card Initialization ... \n\r");
    error_flag=SD_card_init();
    if(error_flag!=no_errors)
