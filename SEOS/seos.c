@@ -93,22 +93,18 @@ void Timer2_ISR (void) interrupt Timer_2_Overflow
     switch( STATE )
     {
         case FIND_CLUS_1:
-			printf("Find_Clus_1**************\n\r");
             CurrentCluster_g = Find_Cluster_And_Check_EOF( CurrentCluster_g, buf1 );
             STATE = DATA_IDLE_2;
             break;
         case LOAD_BUF_1:
-			printf("Load_Buf_1************\n\r");
             load_buffer( buf1 );
             STATE = DATA_IDLE_2;
             break;
         case DATA_IDLE_1:
-			printf("Data_Idle_1********************\n\r");
             if( DATA_REQ == DR_ACTIVE )
                 STATE = DATA_SEND_1;
             break;
         case DATA_SEND_1:
-			printf("Data_Send_1\n\r");
 			YELLOWLED=ON;
             if( ((Buffer1Position_g==512) && (Buffer2Position_g==512)) || ((DATA_REQ == DR_INACTIVE) && (Buffer2Position_g==512)) )
             {
@@ -130,28 +126,39 @@ void Timer2_ISR (void) interrupt Timer_2_Overflow
             else
             {
                 send_buffer( buf1 );
+                if( ((Buffer1Position_g==512) && (Buffer2Position_g==512)) || ((DATA_REQ == DR_INACTIVE) && (Buffer2Position_g==512)) )
+                {
+                    if( ClusterEmpty_g )
+                    {
+                        STATE = FIND_CLUS_2;
+                    }
+                    else
+                    {
+                        STATE = LOAD_BUF_2;
+                    }
+                }
+                else if( (Buffer1Position_g == 512 ) )
+                {
+                    STATE = DATA_SEND_2;
+                }
             }
             break;
 			YELLOWLED=OFF;
         case FIND_CLUS_2:
-			printf("Find_Clus_2***********\n\r");
             CurrentCluster_g = Find_Cluster_And_Check_EOF( CurrentCluster_g, buf2 );
             STATE = DATA_IDLE_1;
             break;
         case LOAD_BUF_2:
-			printf("Load_Buf_2***********\n\r");
             load_buffer( buf2 );
             STATE = DATA_IDLE_1;
             break;
         case DATA_IDLE_2:
-			printf("Data_Idle_2***************\n\r");
             if( DATA_REQ == DR_ACTIVE )
             {
                 STATE = DATA_SEND_2;
             }
             break;
         case DATA_SEND_2:
-			printf("Dat_Send_2\n\r");
             if( ((DATA_REQ == DR_INACTIVE) && (Buffer1Position_g==512)) || ((Buffer1Position_g==512) && (Buffer2Position_g == 512)) )
             {
                 if( ClusterEmpty_g )
@@ -172,6 +179,21 @@ void Timer2_ISR (void) interrupt Timer_2_Overflow
             else
             {
                 send_buffer( buf2 );
+                if( ((DATA_REQ == DR_INACTIVE) && (Buffer1Position_g==512)) || ((Buffer1Position_g==512) && (Buffer2Position_g == 512)) )
+                {
+                    if( ClusterEmpty_g )
+                    {
+                        STATE = FIND_CLUS_1;
+                    }
+                    else
+                    {
+                        STATE = LOAD_BUF_1;
+                    }
+                }
+                else if((Buffer2Position_g==512))
+                {
+                    STATE = DATA_SEND_1;
+                }
             }
             break;
     }

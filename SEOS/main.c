@@ -35,10 +35,6 @@ uint8 idata EndOfSong_g;
 uint32 idata CurrentCluster_g;
 extern uint32 idata FirstRootDirSec_g;
 
-
-// Private Function Prototypes
-void Play_Song(uint32 Start_Cluster);
-
 main()
 {
    uint32 idata Current_directory, Entry_clus;
@@ -121,9 +117,7 @@ main()
 		   }
  	        else
 		    {
-                // File Selected
-                //Open_File(Entry_clus, buf1);
-                
+                // File Selected                
                 // Start OS
                 seos_run( Entry_clus );
 		    }	  
