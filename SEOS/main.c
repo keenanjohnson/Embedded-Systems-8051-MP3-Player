@@ -22,7 +22,6 @@
 #include "File_System.h"
 #include "I2C.h"
 #include "seos.h"
-#include "Timer2_ISR.h"
 
 // Globals
 xdata uint8 buf1[512];
@@ -35,9 +34,9 @@ void Play_Song(uint32 Start_Cluster);
 
 main()
 {
-   uint32 Current_directory, Entry_clus;
-   uint16 i, num_entries, entry_num;
-   uint8 error_flag;
+   uint32 idata Current_directory, Entry_clus;
+   uint16 idata i, num_entries, entry_num;
+   uint8 idata error_flag;
 
    /////////////////////
    // INIT
@@ -116,7 +115,7 @@ main()
  	        else
 		    {
                 // File Selected
-                Open_File(Entry_clus, buf1);
+                //Open_File(Entry_clus, buf1);
                 
                 // Start OS
                 seos_run();
@@ -129,6 +128,7 @@ main()
    }
 } 
 
+/*
 //-------------- Private Functions --------------------------------------------------
 void Play_Song(uint32 Start_Cluster)
 {
@@ -277,7 +277,7 @@ do
 //P3_2=OFF;
 } 
 
-
+/*
 void Play_Song2(uint32 Start_Cluster)
 {
    uint16 index1;
@@ -391,5 +391,5 @@ YELLOWLED=OFF;
    }while(sector_offset<128);   
    GREENLED=1;
   }  
-
+*/
    
