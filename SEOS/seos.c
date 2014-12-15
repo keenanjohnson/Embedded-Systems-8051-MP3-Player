@@ -18,6 +18,7 @@ extern uint8 idata Buffer2Empty_g;
 extern uint8 idata ClusterEmpty_g;
 extern xdata uint8 buf1[512];
 extern xdata uint8 buf2[512];
+extern uint32 idata NextSector_g;
 
 void seos_init( uint32 First_clus )
 {
@@ -45,6 +46,16 @@ void seos_init( uint32 First_clus )
     nCS0=1;
     AMBERLED=OFF;
 
+	// Clear flags
+	Buffer1Empty_g = 0;
+	Buffer2Empty_g = 0;
+
+	// Set next sector global
+	NextSector_g = sector+sector_offset;
+
+    // Set Initial State
+    STATE = DATA_IDLE_1;
+    
     // Set up timer for interrupt
     Timer2_ISR_Init();
 }
@@ -69,22 +80,27 @@ void seos_run( uint32 First_clus )
 				STATE = DATA_IDLE_2;
 				break;
 			case DATA_IDLE_1:
-				if( !DATA_REQ )
+				if( DATA_REQ == DR_ACTIVE )
 					STATE = DATA_SEND_1;
 				break;
 			case DATA_SEND_1:
-				if( ClusterEmpty_g )
+				if( (Buffer1Empty_g && Buffer2Empty_g) || ((DATA_REQ == DR_INACTIVE) && Buffer2Empty_g) )
 				{
-					STATE = FIND_CLUS_2;
-				}
-				else if( (Buffer1Empty_g && Buffer2Empty_g) || ((DATA_REQ) && Buffer2Empty_g) )
-				{
-					STATE = LOAD_BUF_2;
-				}
+                    if( ClusterEmpty_g )
+                    {
+                        STATE = FIND_CLUS_2;
+                    }
+                    else
+                    {
+                        STATE = LOAD_BUF_2;
+                    }
+                }
 				else if( Buffer1Empty_g )
 				{
 					STATE = DATA_SEND_2;
 				}
+                if( DATA_REQ == DR_INACTIVE )
+					STATE = DATA_IDLE_1;
 				else
 				{
 					// Send Buffer 1
@@ -99,24 +115,29 @@ void seos_run( uint32 First_clus )
 				STATE = DATA_IDLE_1;
 				break;
 			case DATA_IDLE_2:
-				if( !DATA_REQ )
+				if( DATA_REQ == DR_ACTIVE )
 				{
 					STATE = DATA_SEND_2;
 				}
 				break;
 			case DATA_SEND_2:
-				if( ClusterEmpty_g )
+				if( ((DATA_REQ == DR_INACTIVE) && Buffer1Empty_g) || (Buffer1Empty_g && Buffer2Empty_g) )
 				{
-					STATE = FIND_CLUS_1;
-				}
-				else if( (DATA_REQ && Buffer1Empty_g) || (Buffer1Empty_g && Buffer2Empty_g) )
-				{
-					STATE = LOAD_BUF_1;
+                    if( ClusterEmpty_g )
+                    {
+                        STATE = FIND_CLUS_1;
+                    }
+                    else
+                    {
+                        STATE = LOAD_BUF_1;
+                    }
 				}
 				else if( Buffer2Empty_g )
 				{
 					STATE = DATA_SEND_2;
 				}
+                if( DATA_REQ == DR_INACTIVE )
+					STATE = DATA_IDLE_2;
 				else
 				{
 					// Send Buffer 2
@@ -131,7 +152,7 @@ void Timer2_ISR (void) interrupt Timer_2_Overflow
     // Clear flag
     TF2=0; 
 
-	YELLOWLED=ON;
+	GREENLED=ON;
 }
 
 void Timer2_ISR_Init( void ) 

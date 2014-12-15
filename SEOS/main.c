@@ -30,7 +30,9 @@ xdata uint8 buf2[512];
 uint8 idata Buffer1Empty_g;
 uint8 idata Buffer2Empty_g;
 uint8 idata ClusterEmpty_g;
+uint32 idata NextSector_g;
 extern uint32 idata FirstRootDirSec_g;
+
 
 // Private Function Prototypes
 void Play_Song(uint32 Start_Cluster);

@@ -14,13 +14,6 @@ uint16 idata BytesPerSec_g;
 uint8 idata SDtype_g, SecPerClus_g, FATtype_g, BytesPerSecShift_g,FATshift_g;
 
 
-
-
-
-
-
-
-
 /***********************************************************************
 DESC: Prints all short file name entries for a given directory 
 INPUT: Starting Sector of the directory and the pointer to a 
