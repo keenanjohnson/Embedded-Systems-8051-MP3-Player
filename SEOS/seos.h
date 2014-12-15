@@ -16,6 +16,7 @@
 #include "File_System.h"
 #include "SPI.h"
 #include "LCD_Routines.h"
+#include "hardware_delay.h"
 
 #define DR_ACTIVE (0)
 #define DR_INACTIVE (1)
@@ -38,6 +39,8 @@ uint32 Find_Cluster_And_Check_EOF( uint32 current_cluster, uint8 xdata *buffer )
 void load_buffer( uint8 xdata *buffer );
 
 void send_buffer( uint8 xdata *buffer );
+
+void show_song_title( uint8 idata *buffer );
 
 void update_MP3_Display( void );
 

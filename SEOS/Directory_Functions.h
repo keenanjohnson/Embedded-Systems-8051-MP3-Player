@@ -18,6 +18,6 @@
 
 uint16 Print_Directory(uint32 Sector_num, uint8 xdata * array_in);
 
-uint32 Read_Dir_Entry(uint32 Sector_num, uint16 Entry, uint8 xdata * array_in);
+uint32 Read_Dir_Entry(uint32 Sector_num, uint16 Entry, uint8 xdata * array_in, uint8 idata * name_buf);
 
 #endif

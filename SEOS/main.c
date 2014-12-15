@@ -42,6 +42,7 @@ main()
    uint32 idata Current_directory, Entry_clus;
    uint16 idata i, num_entries, entry_num;
    uint8 idata error_flag;
+   uint8 idata name_buf[8];
 
    /////////////////////
    // INIT
@@ -115,22 +116,27 @@ main()
 	//////////////////
     while(1)
     {
+		LCD_Write(COMMAND,clear_display);
+        DELAY_MS_T0(5);
+		LCD_Print(11, "Select Song");
         printf("Directory Sector = %lu\n\r",Current_directory);
         num_entries=Print_Directory(Current_directory, buf1);
 	    printf("Enter Selection = ");
   	    entry_num=(uint16)long_serial_input();
 	    if(entry_num<=num_entries)
 	    {
-	       Entry_clus=Read_Dir_Entry(Current_directory, entry_num, buf1);
+	       Entry_clus=Read_Dir_Entry(Current_directory, entry_num, buf1, name_buf);
 		   if(Entry_clus&directory_bit)
 		   {
 		     Entry_clus&=0x0FFFFFFF;
              Current_directory=First_Sector( Entry_clus );
 		   }
- 	        else
-		    {
-                // File Selected                
-                // Start OS
+ 	        else // File Selected
+		    {           
+                // Display Song Title
+                show_song_title(name_buf);
+                
+                // Start OS to play song
                 seos_run( Entry_clus );
 		    }	  
 	   }

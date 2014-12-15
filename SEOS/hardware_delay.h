@@ -15,7 +15,6 @@
 #define Reload_40us_TL0 (timer0_reload&0xff)
 // ------ Public function prototypes -------------------------------
 
-
 void DELAY_MS_T0(uint16 duration);
 
 void DELAY_40us_T0(void);

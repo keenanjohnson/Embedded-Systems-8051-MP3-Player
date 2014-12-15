@@ -333,12 +333,29 @@ void Timer2_ISR_Init( void )
   EA=1;
 }
 
-void update_MP3_Display( void )
+void show_song_title( uint8 idata *buffer )
 {
-	LCD_Print(13, "Song Playing!");	
+    // Clear Display
+    LCD_Write(COMMAND,clear_display);
+    DELAY_MS_T0(5);
 
-	// Clear display
-	//LCD_Write(bit RegSelect, uint8 LCD_Data);
+    // Shown Song Title in Line 1
+	LCD_Write(COMMAND,set_ddram_addr|line1);
+    DELAY_40us_T0();
+    
+    // Print title
+    LCD_Print(8,buffer);
+    
+    // Print Extension
+    LCD_Print(4,".mp3");
+    
 }
 
-
+void update_MP3_Display( void )
+{
+    // Set to Line 2
+    LCD_Write(COMMAND,set_ddram_addr|line2);
+    DELAY_40us_T0();
+    
+    LCD_Print(3,"Hey");
+}

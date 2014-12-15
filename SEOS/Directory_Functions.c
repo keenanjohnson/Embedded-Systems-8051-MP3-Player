@@ -22,8 +22,6 @@ RETURNS: Uint16 number of entries found in the directory
 CAUTION: Supports FAT16, SD_shift must be set before using this function
 ************************************************************************/
 
-
-
 uint16  Print_Directory(uint32 Sector_num, uint8 xdata * array_in)
 { 
    uint32 idata Sector, max_sectors;
@@ -50,11 +48,9 @@ uint16  Print_Directory(uint32 Sector_num, uint8 xdata * array_in)
    nCS0=1;
    AMBERLED=1;
    if(error_flag==no_errors)
-   {
-        
+   {      
      do
      {
- 
 	    temp8=read8(0+i,values);  // read first byte to see if empty
         if((temp8!=0xE5)&&(temp8!=0x00))
 	    {  
@@ -136,10 +132,10 @@ RETURNS: uint32 with cluster in lower 28 bits.  Bit 28 set if this is
 CAUTION: 
 ************************************************************************/
 
-uint32 Read_Dir_Entry(uint32 Sector_num, uint16 Entry, uint8 xdata * array_in)
+uint32 Read_Dir_Entry(uint32 Sector_num, uint16 Entry, uint8 xdata * array_in, uint8 idata * name_buf)
 { 
    uint32 idata Sector, max_sectors, return_clus;
-   uint16 idata i, entries;
+   uint16 idata i, j, entries;
    uint8 idata temp8, attr, error_flag;
    uint8 * values;
 
@@ -171,8 +167,15 @@ uint32 Read_Dir_Entry(uint32 Sector_num, uint16 Entry, uint8 xdata * array_in)
 		   if((attr&0x0E)==0)    // if hidden do not print
 		   {
 		      entries++;
+         
               if(entries==Entry)
               {
+                // Get name
+                for(j=0;j<8;j++)
+                {
+                   name_buf[j] = read8(i+j,values);
+                } 
+              
 			    if(FATtype_g==FAT32)
                 {
                    return_clus=read8(21+i,values);
@@ -223,8 +226,3 @@ uint32 Read_Dir_Entry(uint32 Sector_num, uint16 Entry, uint8 xdata * array_in)
    if(return_clus==0) return_clus=no_entry_found;
    return return_clus;
 }
-
-
-
-
-
