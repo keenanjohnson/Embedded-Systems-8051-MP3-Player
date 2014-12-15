@@ -18,7 +18,7 @@ void seos_init( void )
     Timer2_ISR_Init();
 }
 
-void seos_run( void )
+void seos_run( uint32 First_clus )
 {
     // Init
     seos_init();

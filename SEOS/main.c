@@ -110,7 +110,7 @@ main()
 		   if(Entry_clus&directory_bit)
 		   {
 		     Entry_clus&=0x0FFFFFFF;
-             Current_directory=First_Sector(Entry_clus);
+             Current_directory=First_Sector( Entry_clus );
 		   }
  	        else
 		    {
@@ -118,7 +118,7 @@ main()
                 //Open_File(Entry_clus, buf1);
                 
                 // Start OS
-                seos_run();
+                seos_run( Entry_clus );
 		    }	  
 	   }
 	   else
