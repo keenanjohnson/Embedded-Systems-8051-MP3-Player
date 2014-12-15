@@ -26,10 +26,30 @@ void seos_run( void )
     // ADD TIMEOUT
     while(1)
 	{
+		// Basic state machine
 		switch( STATE )
 		{
-			// Add Cases
-		}	
+			case FIND_CLUS_1:
+				// Find Cluster
+				STATE = DATA_IDLE_2;
+			break;
+			case LOAD_BUF_1:
+				// Load Buffer
+				STATE = DATA_IDLE_2;
+			break;
+			case DATA_IDLE_1:
+			break;
+			case DATA_SEND_1:
+			break;
+			case FIND_CLUS_2:
+			break;
+			case LOAD_BUF_2:
+			break;
+			case DATA_IDLE_2:
+			break;
+			case DATA_SEND_2:
+			break;
+		}
 	}
 }
 
