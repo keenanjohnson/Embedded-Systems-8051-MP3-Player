@@ -38,8 +38,11 @@ void seos_run( uint32 First_clus )
 				STATE = DATA_IDLE_2;
 			break;
 			case DATA_IDLE_1:
+				if( /* DR_active */ 1 )
+					STATE = DATA_SEND_1;
 			break;
 			case DATA_SEND_1:
+				if( /* Buf1_empty */
 			break;
 			case FIND_CLUS_2:
 			break;

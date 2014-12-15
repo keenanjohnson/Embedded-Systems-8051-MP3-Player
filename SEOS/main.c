@@ -27,6 +27,9 @@
 xdata uint8 buf1[512];
 xdata uint8 buf2[512];
 
+uint8 idata Buffer1Empty_g;
+uint8 idata Buffer2Empty_g;
+uint8 idata ClusterEmpty_g;
 extern uint32 idata FirstRootDirSec_g;
 
 // Private Function Prototypes
