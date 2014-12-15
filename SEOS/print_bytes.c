@@ -16,7 +16,7 @@ void print_16bytes(uint8 * array_in)
 {
    uint8 * input;
    //uint16 i;
-   uint8 index, dat;
+   uint8 idata index, dat;
    input = array_in;
    //i= (uint16) input;
    printf("%p ",input);
@@ -45,7 +45,7 @@ CAUTION:
 void print_memory(uint16 number_of_bytes, uint8 * array_in)
 {
    uint8 * input;
-   uint16 i;
+   uint16 idata i;
    input = array_in;
    i = (uint16) input;
    i &= 0x000f;

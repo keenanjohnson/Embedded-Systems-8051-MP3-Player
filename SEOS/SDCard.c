@@ -18,8 +18,8 @@ CAUTION: Must be followed by a read to capture SD card response
 ************************************************************************/
 uint8 SEND_COMMAND(uint8 cmnd, uint32 argum)
 {
- uint8 SPI_send, return_val;
- uint16 SPI_return;
+ uint8 idata SPI_send, return_val;
+ uint16 idata SPI_return;
 
  return_val=no_errors;
  if(cmnd<64)
@@ -150,8 +150,8 @@ CAUTION: Used to capture SD card response
 ************************************************************************/
 uint8 read_block(uint16 num_bytes, uint8 * array_out)
 {
-   uint8 dat,error_val,return_val;
-   uint16 index,SPI_return;
+   uint8 idata dat,error_val,return_val;
+   uint16 idata index,SPI_return;
    index=0;
    return_val=no_errors;
    do
@@ -222,9 +222,9 @@ CAUTION:
 ************************************************************************/
 uint8 SD_card_init(void)
 {
-   uint8 i,error_status,error_flag,valsout[8];
-   uint32 argument;
-   uint16 timeout;
+   uint8 idata i,error_status,error_flag,valsout[8];
+   uint32 idata argument;
+   uint16 idata timeout;
    error_status=no_errors;
    SD_Card_Type=unknown;
    nCS0=1;

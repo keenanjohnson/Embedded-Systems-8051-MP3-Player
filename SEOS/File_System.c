@@ -24,7 +24,7 @@ CAUTION:
 ************************************************************************/
 uint8 read8(uint16 offset, uint8 * array_name)
 {
-   uint8 return_val;
+   uint8 idata return_val;
    offset&=0x1FF;  // limit offset to 0 to 511
    return_val=*(array_name+offset);
    return return_val;
@@ -39,7 +39,7 @@ CAUTION:
 
 uint16 read16(uint16 offset, uint8 * array_name)
 {
-   uint16 return_val,temp;
+   uint16 idata return_val,temp;
    offset&=0x1FF;  // limit offset to 0 to 511
    return_val=0;
    return_val=*(array_name+offset+1);
@@ -58,8 +58,8 @@ CAUTION:
 
 uint32 read32(uint16 offset, uint8 * array_name)
 {
-   uint32 return_val;
-   uint8 temp, i;
+   uint32 idata return_val;
+   uint8 idata temp, i;
    return_val=0;
    offset&=0x1FF;  // limit offset to 0 to 511
    for(i=0;i<4;i++)

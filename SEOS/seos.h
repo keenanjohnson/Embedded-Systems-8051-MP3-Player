@@ -15,6 +15,7 @@
 #include "PORT.H"
 #include "SDCard.h"
 #include "File_System.h"
+#include "SPI.h"
 
 #define DR_ACTIVE (0)
 #define DR_INACTIVE (1)
@@ -31,3 +32,9 @@ void Timer2_ISR_Init(void);
 void seos_init( uint32 First_clus );
 
 void seos_run( uint32 First_clus );
+
+uint32 Find_Cluster_And_Check_EOF( uint32 current_cluster, uint8 xdata *buffer );
+
+void load_buffer( uint8 xdata *buffer );
+
+void send_buffer( uint8 xdata *buffer );
