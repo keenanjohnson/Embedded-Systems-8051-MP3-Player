@@ -13,6 +13,10 @@
 
 enum seos_state_t STATE;
 
+extern uint8 idata Buffer1Empty_g;
+extern uint8 idata Buffer2Empty_g;
+extern uint8 idata ClusterEmpty_g;
+
 void seos_init( void )
 {
     Timer2_ISR_Init();
@@ -32,26 +36,65 @@ void seos_run( uint32 First_clus )
 			case FIND_CLUS_1:
 				// Find Cluster
 				STATE = DATA_IDLE_2;
-			break;
+				break;
 			case LOAD_BUF_1:
 				// Load Buffer
 				STATE = DATA_IDLE_2;
-			break;
+				break;
 			case DATA_IDLE_1:
-				if( /* DR_active */ 1 )
+				if( !DATA_REQ )
 					STATE = DATA_SEND_1;
-			break;
+				break;
 			case DATA_SEND_1:
-				if( /* Buf1_empty */
-			break;
+				if( ClusterEmpty_g )
+				{
+					STATE = FIND_CLUS_2;
+				}
+				else if( (Buffer1Empty_g && Buffer2Empty_g) || ((DATA_REQ) && Buffer2Empty_g) )
+				{
+					STATE = LOAD_BUF_2;
+				}
+				else if( Buffer1Empty_g )
+				{
+					STATE = DATA_SEND_2;
+				}
+				else
+				{
+					// Send Buffer 1
+				}
+				break;
 			case FIND_CLUS_2:
-			break;
+				// Find Cluster
+				STATE = DATA_IDLE_1;
+				break;
 			case LOAD_BUF_2:
-			break;
+				// Load Buffer
+				STATE = DATA_IDLE_1;
+				break;
 			case DATA_IDLE_2:
-			break;
+				if( !DATA_REQ )
+				{
+					STATE = DATA_SEND_2;
+				}
+				break;
 			case DATA_SEND_2:
-			break;
+				if( ClusterEmpty_g )
+				{
+					STATE = FIND_CLUS_1;
+				}
+				else if( (DATA_REQ && Buffer1Empty_g) || (Buffer1Empty_g && Buffer2Empty_g) )
+				{
+					STATE = LOAD_BUF_1;
+				}
+				else if( Buffer2Empty_g )
+				{
+					STATE = DATA_SEND_2;
+				}
+				else
+				{
+					// Send Buffer 2
+				}
+				break;
 		}
 	}
 }
