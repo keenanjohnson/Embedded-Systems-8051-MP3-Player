@@ -40,8 +40,10 @@ void seos_init( uint32 First_clus );
 //
 // First_clus is the first cluster of
 // the song to play
-void seos_run( uint32 First_clus );
+void seos_run( uint32 First_clus, uint8 idata *buffer );
 
+// Gets next song cluster
+// checks and sets end of file flag
 uint32 Find_Cluster_And_Check_EOF( uint32 current_cluster, uint8 xdata *buffer );
 
 void load_buffer( uint8 xdata *buffer );
@@ -50,5 +52,5 @@ void send_buffer( uint8 xdata *buffer );
 
 void show_song_title( uint8 idata *buffer );
 
-void update_MP3_Display( void );
+void update_MP3_Display( uint8 idata *buffer );
 

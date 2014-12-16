@@ -136,11 +136,8 @@ main()
 		   }
  	        else // File Selected
 		    {           
-                // Display Song Title
-                show_song_title(name_buf);
-                
                 // Start OS to play song
-                seos_run( Entry_clus );
+                seos_run( Entry_clus, name_buf );
 		    }	  
 	   }
 	   else

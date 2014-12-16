@@ -82,7 +82,7 @@ void seos_init( uint32 First_clus )
     Timer2_ISR_Init();
 }
 
-void seos_run( uint32 First_clus )
+void seos_run( uint32 First_clus, uint8 idata *buffer )
 {
 	// Init
     seos_init( First_clus );
@@ -90,7 +90,11 @@ void seos_run( uint32 First_clus )
     // Check for end of song
     while( !EndOfSong_g )
 	{
-        update_MP3_Display();
+		// Print to display
+        update_MP3_Display( buffer );
+
+		// Throttle update rate
+		DELAY_MS_T0(500);
 	}
 }
 
@@ -362,10 +366,12 @@ void show_song_title( uint8 idata *buffer )
     
 }
 
-void update_MP3_Display( void )
+void update_MP3_Display( uint8 idata *buffer )
 {
     // Variable init
 	uint8 idata print_value;
+
+	show_song_title( buffer );
 
 	// Check tick count
 	if( tickCount_g > 1000 )
@@ -373,7 +379,7 @@ void update_MP3_Display( void )
         tickCount_g = 0;
         secondsElapsed_g++;
     }
-    if( secondsElapsed_g > 60 )
+    if( secondsElapsed_g >= 60 )
     {
         secondsElapsed_g = 0;
         minutesElapsed_g++;
