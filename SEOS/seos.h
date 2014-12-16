@@ -46,11 +46,16 @@ void seos_run( uint32 First_clus, uint8 idata *buffer );
 // checks and sets end of file flag
 uint32 Find_Cluster_And_Check_EOF( uint32 current_cluster, uint8 xdata *buffer );
 
+// Function for load buffer state
 void load_buffer( uint8 xdata *buffer );
 
+// Function for send buffer state
 void send_buffer( uint8 xdata *buffer );
 
+// Prints song title to first line of LCD
+// Called within update_MP3_Display
 void show_song_title( uint8 idata *buffer );
 
+// Updates LCD with song progess
 void update_MP3_Display( uint8 idata *buffer );
 
