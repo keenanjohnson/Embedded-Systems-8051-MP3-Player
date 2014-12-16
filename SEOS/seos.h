@@ -26,12 +26,20 @@
 #define Timer2_RELOAD_H (Timer2_RELOAD/256)
 #define Timer2_RELOAD_L (Timer2_RELOAD%256)
 
+// ENUM for state machine
 enum seos_state_t{FIND_CLUS_1, LOAD_BUF_1, DATA_IDLE_1, DATA_SEND_1, FIND_CLUS_2, LOAD_BUF_2, DATA_IDLE_2, DATA_SEND_2};
 
+// ISR for timer2
+// runs the state machine
 void Timer2_ISR_Init(void);
 
+// Called by seos_run
 void seos_init( uint32 First_clus );
 
+// Starts the OS to play a song
+//
+// First_clus is the first cluster of
+// the song to play
 void seos_run( uint32 First_clus );
 
 uint32 Find_Cluster_And_Check_EOF( uint32 current_cluster, uint8 xdata *buffer );

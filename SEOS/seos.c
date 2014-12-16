@@ -25,10 +25,18 @@ extern uint32 idata SectorOffset_g;
 extern uint8 idata EndOfSong_g;
 extern uint32 idata CurrentCluster_g;
 extern uint8 idata SecPerClus_g;
+extern uint16 idata tickCount_g;
+extern uint16 idata secondsElapsed_g;
+extern uint16 idata minutesElapsed_g;
 
 void seos_init( uint32 First_clus )
 {
     REDLED=OFF;
+    
+    // Tick count to zero
+    tickCount_g = 0;
+    secondsElapsed_g = 0;
+    minutesElapsed_g = 0;
 
     // Set first cluster global
     CurrentCluster_g = First_clus;
@@ -90,6 +98,9 @@ void Timer2_ISR (void) interrupt Timer_2_Overflow
 {
     // Clear flag
     TF2=0; 
+    
+    // Tick
+    tickCount_g = (tickCount_g+interval_ms); 
 
 	// Basic state machine
     switch( STATE )
@@ -353,9 +364,46 @@ void show_song_title( uint8 idata *buffer )
 
 void update_MP3_Display( void )
 {
+    // Variable init
+	uint8 idata print_value;
+
+	// Check tick count
+	if( tickCount_g > 1000 )
+    {
+        tickCount_g = 0;
+        secondsElapsed_g++;
+    }
+    if( secondsElapsed_g > 60 )
+    {
+        secondsElapsed_g = 0;
+        minutesElapsed_g++;
+    }
+
     // Set to Line 2
     LCD_Write(COMMAND,set_ddram_addr|line2);
     DELAY_40us_T0();
+
+	// Print Heading
+	LCD_Print(6, "Time: ");
+	DELAY_40us_T0();
     
-    LCD_Print(3,"Hey");
+    // Print Minutes
+	print_value = (minutesElapsed_g/10) | 0x30;
+	LCD_Write(DDRAM,print_value);
+	DELAY_40us_T0();
+	print_value = (minutesElapsed_g%10) | 0x30;
+	LCD_Write(DDRAM,print_value);
+	DELAY_40us_T0();
+    
+    // Add semi colon
+	LCD_Print(1, ":");
+	DELAY_40us_T0();
+
+    // Print Seconds
+    print_value = (secondsElapsed_g/10) | 0x30;
+	LCD_Write(DDRAM,print_value);
+	DELAY_40us_T0();
+	print_value = (secondsElapsed_g%10) | 0x30;
+	LCD_Write(DDRAM,print_value);
+	DELAY_40us_T0();
 }

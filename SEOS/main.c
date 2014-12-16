@@ -36,6 +36,9 @@ uint32 idata SectorOffset_g;
 uint8 idata EndOfSong_g;
 uint32 idata CurrentCluster_g;
 extern uint32 idata FirstRootDirSec_g;
+uint16 idata tickCount_g;
+uint16 idata secondsElapsed_g;
+uint16 idata minutesElapsed_g;
 
 main()
 {
